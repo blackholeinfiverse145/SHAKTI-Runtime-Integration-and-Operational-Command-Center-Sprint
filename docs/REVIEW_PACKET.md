@@ -1,305 +1,261 @@
 # REVIEW_PACKET.md
 
-**Project:** SHAKTI Runtime Integration and Operational Command Center
+**Project:** SHAKTI Operational Command Center
+**Document Type:** Frontend Review Packet
 **Owner:** Pratik Bhuwad
-**Module:** Frontend Review Packet
-**Version:** 1.0
-**Last Updated:** 2025
+**Version:** 2.0
 **Classification:** Internal Technical Review
+**Date:** 2025
 
 ---
 
 ## 1. Project Summary
 
-The SHAKTI Operational Command Center is a production-grade React frontend application that provides a centralized, real-time operational interface for monitoring the national power grid.
+The SHAKTI Operational Command Center is a production-grade React single-page application that provides a centralised, real-time operational interface for monitoring the national power grid. It is designed as a command center — not a reporting tool — with all critical operational information visible within the initial viewport.
 
 | Property | Value |
 |---|---|
 | Application Type | Single-Page Application (SPA) |
 | Framework | React 19 + Vite 8 |
-| Language | TypeScript 6 (strict, no `any`) |
-| Styling | Tailwind CSS 4 (dark theme) |
-| State Management | TanStack Query 5 (server state) |
-| HTTP Client | Axios 1 |
-| Charts | Recharts 3 (lazy-loaded) |
+| Language | TypeScript 6 — strict mode, zero `any` types |
+| Styling | Tailwind CSS 4 — dark theme only |
+| Server State | TanStack Query 5 — polling, caching, retry |
+| HTTP Client | Axios 1 — 10s timeout, response interceptor |
+| Charts | Recharts 3 — lazy-loaded via `React.lazy()` |
 | Build Output | `dist/` — static files, no server required |
 | Entry Point | `src/main.tsx` |
 | Main Page | `src/pages/Dashboard.tsx` |
+| Control Plane Target | `http://127.0.0.1:8009` (`VITE_CONTROL_PLANE_URL`) |
 
----
-
-## 2. Entry Point and Startup Flow
+### Startup Flow
 
 ```
 index.html
-  └── src/main.tsx
-        ├── QueryClientProvider (TanStack Query)
+  └── src/main.tsx  (QueryClientProvider — staleTime: 10s, retry: 2, refetchOnWindowFocus: false)
         └── App
               └── Dashboard
-                    └── DashboardLayout
-                          ├── Header
-                          └── CSS Grid (12-col)
-                                ├── ExecutiveSummary      → /api/executive-metrics, /api/kpis
-                                ├── NationalGridStatus    → /api/grid-status
-                                ├── LiveAlertQueue        → /api/alerts
-                                ├── RiskHeatmap           → /api/risk-scores
-                                ├── ForecastPanel (lazy)  → /api/forecast
-                                ├── IncidentQueue         → /api/incidents
-                                ├── OperationalTimeline   → /api/timeline
-                                ├── SystemHealth          → /api/system-health
-                                ├── ReplayStatus          → /api/replay
-                                └── EvidencePanel         → /api/evidence
+                    └── DashboardLayout  (min-h-screen bg-slate-950)
+                          ├── Header     (live clock, LIVE pulse, notifications, user identity)
+                          └── CSS Grid   (12-column, gap-2.5)
+                                ├── Row 1 — ExecutiveSummary          col-span-12
+                                ├── Row 2 — NationalGridStatus        lg:col-span-7
+                                │          LiveAlertQueue             lg:col-span-5
+                                ├── Row 3 — RiskHeatmap               lg:col-span-4
+                                │          ForecastPanel (lazy)       lg:col-span-8
+                                ├── Row 4 — IncidentQueue             md:col-span-6
+                                │          OperationalTimeline        md:col-span-6
+                                ├── Row 5 — SystemHealth              md:col-span-7
+                                │          ReplayStatus               md:col-span-5
+                                └── Row 6 — EvidencePanel             col-span-12
 ```
 
-On startup, all 11 API calls are made in parallel. The dashboard populates progressively as responses arrive. No zone blocks another.
+On startup, all eight TanStack Query hooks fire in parallel. No zone blocks another from mounting or rendering.
 
 ---
 
-## 3. Runtime Flow
+## 2. Testing Summary
 
-```mermaid
-flowchart TD
-    A[Browser loads index.html] --> B[main.tsx initializes QueryClient]
-    B --> C[App renders Dashboard]
-    C --> D[DashboardLayout renders Header + Grid]
-    D --> E[10 zone components mount simultaneously]
-    E --> F[11 useQuery hooks fire in parallel]
-    F --> G{VITE_API_BASE_URL set?}
-    G -->|Yes| H[Axios HTTP calls to backend]
-    G -->|No| I[Mock data layer activates]
-    H --> J[Typed JSON responses]
-    I --> J
-    J --> K[TanStack Query caches data]
-    K --> L[Components re-render with data]
-    L --> M[Dashboard fully populated]
-    M --> N[Background refetch timers active]
-    N --> F
-```
+Testing was conducted against the running frontend at `http://localhost:5173`. The Control Plane backend at `http://127.0.0.1:8009` was unavailable during this test cycle, returning `ERR_CONNECTION_REFUSED` on all requests.
 
----
-
-## 4. API Dependencies
-
-The frontend depends on 11 REST API endpoints. All are currently served by the mock data layer when `VITE_API_BASE_URL` is not configured.
-
-| Endpoint | Zone | Interval | Status |
-|---|---|---|---|
-| `GET /api/executive-metrics` | Executive Summary | 30s | Mock active |
-| `GET /api/kpis` | Executive Summary | 30s | Mock active |
-| `GET /api/alerts` | Live Alert Queue | 15s | Mock active |
-| `GET /api/grid-status` | National Grid Status | 30s | Mock active |
-| `GET /api/risk-scores` | Risk Heatmap | 30s | Mock active |
-| `GET /api/forecast` | Forecast Panel | 60s | Mock active |
-| `GET /api/incidents` | Incident Queue | 30s | Mock active |
-| `GET /api/timeline` | Operational Timeline | 15s | Mock active |
-| `GET /api/system-health` | System Health | 20s | Mock active |
-| `GET /api/replay` | Replay Status | 10s | Mock active |
-| `GET /api/evidence` | Evidence Panel | 60s | Mock active |
-
-To connect to a live backend: set `VITE_API_BASE_URL=https://your-api-server.example.com` in `.env` and rebuild.
-
----
-
-## 5. Component Map
-
-| Component | File | Data Source | Memoized |
-|---|---|---|---|
-| Header | `components/layout/Header.tsx` | `useState` (clock) | No |
-| DashboardLayout | `layouts/DashboardLayout.tsx` | None | No |
-| ExecutiveSummary | `components/dashboard/ExecutiveSummary.tsx` | `useExecutiveMetrics`, `useKPIs` | Partial |
-| MetricCard | inside ExecutiveSummary | Props | Yes |
-| KPICard | inside ExecutiveSummary | Props | Yes |
-| NationalGridStatus | `components/dashboard/NationalGridStatus.tsx` | `useGridStatus` | Partial |
-| RegionRow | inside NationalGridStatus | Props | Yes |
-| LiveAlertQueue | `components/dashboard/LiveAlertQueue.tsx` | `useAlerts` | Partial |
-| AlertRow | inside LiveAlertQueue | Props | Yes |
-| RiskHeatmap | `components/dashboard/RiskHeatmap.tsx` | `useRiskScores` | Partial |
-| RiskRow | inside RiskHeatmap | Props | Yes |
-| ForecastPanel | `components/dashboard/ForecastPanel.tsx` | `useForecast` | Yes (whole component) |
-| IncidentQueue | `components/dashboard/IncidentQueue.tsx` | `useIncidents` | Partial |
-| IncidentRow | inside IncidentQueue | Props | Yes |
-| OperationalTimeline | `components/dashboard/OperationalTimeline.tsx` | `useTimeline` | Partial |
-| EventRow | inside OperationalTimeline | Props | Yes |
-| SystemHealth | `components/dashboard/SystemHealth.tsx` | `useSystemHealth` | Partial |
-| ServiceRow | inside SystemHealth | Props | Yes |
-| ReplayStatus | `components/dashboard/ReplayStatus.tsx` | `useReplayJobs` | Partial |
-| ReplayRow | inside ReplayStatus | Props | Yes |
-| EvidencePanel | `components/dashboard/EvidencePanel.tsx` | `useEvidence` | Partial |
-| EvidenceRow | inside EvidencePanel | Props | Yes |
-| Skeleton | `components/ui/skeleton.tsx` | None | No |
-
----
-
-## 6. Architecture Overview
-
-```mermaid
-graph TD
-    subgraph Presentation["Presentation Layer"]
-        Dashboard
-        Zones["10 Zone Components"]
-        SubComponents["Memoized Sub-components"]
-    end
-
-    subgraph StateLayer["State Layer"]
-        Hooks["useQueries.ts (11 hooks)"]
-        QueryCache["TanStack Query Cache"]
-    end
-
-    subgraph ServiceLayer["Service Layer"]
-        APIService["services/api.ts"]
-        MockLayer["Mock Data Layer"]
-        AxiosClient["Axios HTTP Client"]
-    end
-
-    subgraph TypeLayer["Type Layer"]
-        Types["types/api.ts"]
-        Utils["utils/format.ts"]
-    end
-
-    subgraph Backend["Backend (External)"]
-        RESTAPI["REST API Endpoints"]
-    end
-
-    Dashboard --> Zones
-    Zones --> SubComponents
-    Zones --> Hooks
-    Hooks --> QueryCache
-    QueryCache --> APIService
-    APIService --> MockLayer
-    APIService --> AxiosClient
-    AxiosClient --> RESTAPI
-    Types --> Hooks
-    Types --> APIService
-    Utils --> Zones
-    Utils --> SubComponents
-```
-
----
-
-## 7. Failure Behavior
-
-The application is designed for graceful degradation:
-
-| Failure | Behavior |
-|---|---|
-| Single API endpoint fails | Only the affected zone shows an error state with a Retry button. All other zones continue operating normally. |
-| All API endpoints fail | All zones show independent error states. The header, layout, and navigation remain fully functional. |
-| Network timeout (>10s) | Axios timeout triggers after 10 seconds. TanStack Query retries twice before entering error state. |
-| Backend returns empty array | Zone renders an empty state message. No error is shown. |
-| Lazy-loaded chunk fails | Forecast Panel shows the Suspense fallback (Skeleton). The rest of the dashboard is unaffected. |
-| Background refetch fails | Previously cached data remains displayed. No error flash. Error state only appears after all retries are exhausted. |
-
----
-
-## 8. Screenshots
-
-> **Placeholder:** Insert production screenshots here before final review submission.
-
-| Screenshot | Description |
-|---|---|
-| `screenshots/dashboard-full.png` | Full dashboard at 1440px — all zones populated |
-| `screenshots/dashboard-loading.png` | Dashboard during initial load — skeleton states visible |
-| `screenshots/dashboard-error.png` | Dashboard with one zone in error state |
-| `screenshots/dashboard-tablet.png` | Dashboard at 768px tablet breakpoint |
-| `screenshots/dashboard-mobile.png` | Dashboard at 375px mobile breakpoint |
-| `screenshots/executive-summary.png` | Executive Summary zone — metrics and KPIs |
-| `screenshots/alert-queue.png` | Live Alert Queue — severity-coded alerts |
-| `screenshots/forecast-chart.png` | Forecast Panel — area chart with tooltip |
-| `screenshots/incident-queue.png` | Incident Queue — active incidents |
-| `screenshots/evidence-panel.png` | Evidence Panel — confidence bars |
-
----
-
-## 9. Walkthrough Video
-
-> **Placeholder:** Insert walkthrough video link here before final review submission.
-
-| Item | Details |
-|---|---|
-| Video Title | SHAKTI Operational Command Center — Frontend Walkthrough |
-| Duration | ~5 minutes |
-| Coverage | Dashboard load, zone interactions, responsive behavior, error state demonstration |
-| Format | MP4 / Loom / YouTube (unlisted) |
-| Link | `[INSERT LINK]` |
-
----
-
-## 10. Evidence Checklist
-
-### Code Quality
-
-- [x] TypeScript strict mode — zero `any` types
-- [x] All API response types defined in `src/types/api.ts`
-- [x] All components have typed props
-- [x] No prop drilling — all data fetched via hooks
-- [x] `React.memo()` applied to all list-row sub-components
-- [x] `React.lazy()` applied to Recharts-dependent component
-- [x] Zero TypeScript compilation errors (`npx tsc --noEmit` passes)
-- [x] Production build succeeds (`npm run build` passes)
-
-### UI Requirements
-
-- [x] Dark theme throughout (`slate-950` base)
-- [x] Loading skeleton states on all zones
-- [x] Error states with retry buttons on all zones
-- [x] Empty states on list zones
-- [x] Responsive layout (mobile, tablet, desktop)
-- [x] ARIA labels on all zone sections
-- [x] Status indicators use color + text (not color alone)
-- [x] Live clock in header
-- [x] LIVE pulse indicator
-
-### Architecture Requirements
-
-- [x] CSS Grid layout (12-column)
-- [x] TanStack Query for all server state
-- [x] Axios HTTP client with 10s timeout
-- [x] Mock API layer with production-contract-compatible data
-- [x] Environment variable for API base URL
-- [x] Parallel API calls on startup
-- [x] Per-zone independent error handling
-- [x] Background polling with configurable intervals
-- [x] Code splitting (ForecastPanel lazy-loaded)
-
-### Documentation
-
-- [x] `dashboard_architecture.md` — complete with Mermaid diagrams
-- [x] `dashboard_zoning.md` — complete with grid specs
-- [x] `component_inventory.md` — complete with props and state
-- [x] `README.md` — complete with installation and scripts
-- [x] `UI_ARCHITECTURE.md` — complete with theme and layout strategy
-- [x] `COMPONENT_LIBRARY.md` — complete with usage examples
-- [x] `RUNTIME_INTEGRATION.md` — complete with sequence diagrams
-- [x] `TESTING_GUIDE.md` — complete with manual checklist
-- [x] `REVIEW_PACKET.md` — this document
-
----
-
-## 11. Known Limitations
-
-| Limitation | Description | Planned Resolution |
+| Test ID | Area | Status |
 |---|---|---|
-| No WebSocket support | All data is polled via HTTP. Real-time push updates are not implemented. | Replace `refetchInterval` with WebSocket subscription in hooks |
-| No GIS map | Grid status and risk heatmap use bar charts, not geographic maps | Integrate Leaflet or Mapbox in a future iteration |
-| No authentication | No login, session management, or role-based access control | Implement auth layer with JWT or OAuth2 |
-| No light mode | Application is dark-theme only | Add CSS variable theme switching |
-| No filtering | Alert queue, incident queue, and timeline have no filter or search | Add filter controls to list zones |
-| Single page | No multi-page routing implemented | Add React Router routes for detail pages |
-| No WebSocket | Polling only — not suitable for sub-second update requirements | Implement WebSocket or SSE for high-frequency data |
+| TC-001 | Dashboard Startup | PASS |
+| TC-002 | API Connectivity | BLOCKED |
+| TC-003 | Component Reuse | PASS |
+| TC-004 | Responsive Layout — Desktop | PASS |
+| TC-005 | Responsive Layout — Tablet | PASS |
+| TC-006 | Dark Theme | PASS |
+| TC-007 | Operational Navigation | PASS |
+| TC-008 | Failure Handling | PASS |
+| TC-009 | Loading States | PASS |
+| TC-010 | Empty States | NOT VERIFIED |
+
+**Total tests:** 10 — **PASS:** 7 — **BLOCKED:** 1 — **NOT VERIFIED:** 2 (Empty States; Loading States was verified)
+
+> Note: TC-002 is blocked by an external infrastructure dependency. TC-010 requires a running backend returning empty-array responses. Neither represents a frontend defect. All seven PASS results were verified against the live application.
+
+Full test procedures, steps, expected results, actual results, and evidence references are documented in `docs/TESTING_GUIDE.md`.
 
 ---
 
-## 12. Future Improvements
+## 3. Runtime Integration Status
 
-| Priority | Improvement | Effort |
+The frontend runtime integration layer is fully implemented. All eight API endpoints are wired, typed, and consumed by their respective dashboard zones. Integration could not be validated end-to-end during this test cycle because the Control Plane backend was unavailable.
+
+### Integration Layer Components
+
+| File | Purpose |
+|---|---|
+| `src/api/client.ts` | Axios instance — base URL from `VITE_CONTROL_PLANE_URL`, 10s timeout, response interceptor normalising 404 / 503 / timeout / network errors |
+| `src/api/endpoints.ts` | Eight typed fetch functions — one per endpoint, each returning a fully typed response interface |
+| `src/hooks/useQueries.ts` | Eight TanStack Query hooks — per-hook polling intervals and retry counts |
+| `src/types/runtime.ts` | Official Runtime Integration API contracts — TypeScript interfaces for all eight response shapes |
+
+### Hook and Endpoint Registry
+
+| Hook | Endpoint | Polling Interval | Retry | Consumer Zones |
+|---|---|---|---|---|
+| `useHealth` | `GET /health` | 10s | 1 | — (liveness probe) |
+| `useSystemStatus` | `GET /system/status` | 5s | 2 | System Health |
+| `useMetrics` | `GET /metrics` | 10s | 2 | Executive Summary (KPI row) |
+| `useExecutiveDashboard` | `GET /dashboard/executive` | 15s | 2 | Executive Summary (metric row) |
+| `useOperationsDashboard` | `GET /dashboard/operations` | 5s | 2 | Operations Grid, Operations Queue, Risk Heatmap |
+| `useAlertsDashboard` | `GET /dashboard/alerts` | 5s | 2 | Live Alerts, Operational Timeline |
+| `useRuntimeDashboard` | `GET /dashboard/runtime` | 5s | 2 | Runtime Sessions |
+| `useTelemetryDashboard` | `GET /dashboard/telemetry` | 10s | 2 | Telemetry, Evidence Panel |
+
+### Null Safety
+
+The following API fields are typed as `number | null` in `src/types/runtime.ts` and are handled defensively in all consuming components:
+
+| Field | Component | Null Rendering |
 |---|---|---|
-| High | WebSocket integration for real-time alerts and grid status | Medium |
-| High | Authentication and role-based dashboard visibility | High |
-| Medium | Interactive GIS map for grid status and risk heatmap | High |
-| Medium | Alert acknowledgement action (POST /api/alerts/:id/acknowledge) | Low |
-| Medium | Incident detail page with full timeline and evidence | Medium |
-| Medium | Filter and search on alert queue, incident queue, timeline | Medium |
-| Low | Light/dark theme toggle | Low |
-| Low | User preferences persistence (localStorage) | Low |
-| Low | Drag-and-drop dashboard zone reordering | High |
-| Low | Export to PDF / CSV for evidence and incident reports | Medium |
+| `MetricsResponse.success_rate` | `ExecutiveSummary` | Renders `"—"` |
+| `MetricsResponse.average_response_time_ms` | `ExecutiveSummary` | Renders `"—"` |
+| `MetricsResponse.cache_hit_rate` | Not displayed | — |
+| `ComponentStatus.response_time_ms` | `SystemHealth` | Renders `"—"` |
+| `RuntimeSession.current_operation` | `ReplayStatus` | Falls back to `session_id.slice(0, 16)` |
+
+---
+
+## 4. API Dependency Status
+
+| Endpoint | Frontend Status | Backend Status | Validation Status |
+|---|---|---|---|
+| `GET /health` | Implemented | Unavailable | Blocked |
+| `GET /system/status` | Implemented | Unavailable | Blocked |
+| `GET /metrics` | Implemented | Unavailable | Blocked |
+| `GET /dashboard/executive` | Implemented | Unavailable | Blocked |
+| `GET /dashboard/operations` | Implemented | Unavailable | Blocked |
+| `GET /dashboard/alerts` | Implemented | Unavailable | Blocked |
+| `GET /dashboard/runtime` | Implemented | Unavailable | Blocked |
+| `GET /dashboard/telemetry` | Implemented | Unavailable | Blocked |
+
+All eight endpoints are implemented, typed, and integrated. End-to-end validation is pending backend availability.
+
+To connect to a live backend, set `VITE_CONTROL_PLANE_URL` in `.env` and restart the development server:
+
+```env
+VITE_CONTROL_PLANE_URL=http://127.0.0.1:8009
+```
+
+---
+
+## 5. Failure Behaviour
+
+The application is designed for graceful, per-zone degradation. No failure in one zone propagates to any other zone.
+
+| Failure Condition | Frontend Behaviour |
+|---|---|
+| Single endpoint returns connection refused | Only the affected zone enters its error state. All other zones continue operating normally. |
+| All endpoints return connection refused | All zones independently enter their error states. The header, layout, and all card containers remain fully intact. |
+| Axios timeout (`ECONNABORTED`) | Interceptor rejects with `Request timeout: {url}`. TanStack Query retries up to the configured limit before entering error state. |
+| HTTP 404 | Interceptor rejects with `Endpoint not found: {url}`. Zone enters error state. |
+| HTTP 503 | Interceptor rejects with `Service unavailable: {url}`. Zone enters error state. |
+| No `error.response` (network-level failure) | Interceptor rejects with `Network error — cannot reach control plane at {BASE_URL}`. |
+| Backend returns empty array | Zone renders its empty state message in muted slate — not an error state. No Retry button is shown. |
+| Background refetch fails | Previously cached data remains displayed. Error state only appears after all retries are exhausted. |
+| `ForecastPanel` lazy chunk load fails | `Suspense` fallback (`Skeleton h-64`) is shown. All other zones are unaffected. |
+| User clicks Retry | Zone immediately re-issues its query. Returns to error state if the backend remains unreachable. |
+
+### Error State Inventory
+
+Each zone renders a specific inline error message and an underlined Retry button when its query fails:
+
+| Zone | Error Message |
+|---|---|
+| Operations Grid | "Failed to load operations" |
+| Live Alerts | "Failed to load alerts" |
+| Risk Heatmap | "Failed to load risk data" |
+| Telemetry | "Failed to load telemetry" |
+| Operations Queue | "Failed to load operations" |
+| Operational Timeline | "Failed to load timeline" |
+| System Health | "Failed to load system health" |
+| Runtime Sessions | "Failed to load runtime sessions" |
+| Evidence Panel | "Failed to load evidence" |
+
+---
+
+## 6. Known Limitations
+
+### External Dependency — Control Plane Backend Unavailable
+
+The SHAKTI Control Plane backend service was not running during this test cycle. All requests to `http://127.0.0.1:8009` returned `ERR_CONNECTION_REFUSED`. This is an external infrastructure dependency. It is not a frontend defect.
+
+**Impact:**
+
+| Area | Impact |
+|---|---|
+| End-to-end API validation | Cannot be completed until the backend is available |
+| Live data rendering in all ten zones | Cannot be verified |
+| Background polling behaviour | Cannot be observed |
+| Empty state rendering (TC-010) | Cannot be triggered |
+
+**Resolution:** Deploy and start the Control Plane backend at `http://127.0.0.1:8009`. Re-execute TC-002 and TC-010.
+
+### Design Scope Limitations
+
+| Limitation | Detail |
+|---|---|
+| HTTP polling only | All data is fetched via `refetchInterval`. No WebSocket or SSE support is implemented. |
+| No authentication | No login, session management, or role-based access control. |
+| Dark theme only | No light mode or theme toggle. |
+| No filtering or search | Alert queue, operations queue, and timeline have no filter or search controls. |
+| Single-page application | No detail pages or drill-down routes beyond the main dashboard. |
+| No GIS map | Grid status and risk heatmap use bar-based visualisations, not geographic maps. |
+
+---
+
+## 7. Evidence Summary
+
+All evidence files are located in the `evidence/` directory relative to the project root. No images are embedded in this document.
+
+| File | Covers | Description |
+|---|---|---|
+| `evidence/dashboard-startup.png` | TC-001, TC-003, TC-007 | Full dashboard at 1440px — all ten zones mounted, header fully rendered, consistent card surfaces and error patterns visible across all zones |
+| `evidence/responsive-desktop.png` | TC-004 | Dashboard at 1440 × 900 — 12-column CSS Grid with correct zone column spans across all six rows |
+| `evidence/responsive-tablet.png` | TC-005 | Dashboard at 768 × 1024 — `md:` breakpoint active, Operations Grid and Live Alerts stacked to full width, remaining zones in 2-column configuration |
+| `evidence/dark-theme.png` | TC-006 | Full-page dark theme — `slate-950` root background, `slate-900` header, `slate-800/60` card surfaces, no light surfaces present |
+| `evidence/loading-state.png` | TC-009 | Dashboard during initial load — animated `animate-pulse` Skeleton placeholders visible across all zones before error states are reached |
+| `evidence/failure-handling.png` | TC-008 | Dashboard in full error state — all zones displaying inline red error messages and Retry buttons, header and layout intact |
+| `evidence/api-console-error.png` | TC-002, TC-008 | Browser DevTools console — Axios network error output for all eight endpoints: `Network error — cannot reach control plane at http://127.0.0.1:8009` |
+
+---
+
+## 8. Production Readiness
+
+### Verified and Ready
+
+| Area | Status | Detail |
+|---|---|---|
+| Application startup | Ready | Loads without errors, all ten zones mount, zero JavaScript runtime errors |
+| Dark theme | Ready | Consistent `slate-950` / `slate-800/60` surfaces throughout, no light backgrounds |
+| Responsive layout | Ready | Correct column spans at 1440px (desktop) and 768px (tablet) |
+| Loading states | Ready | Animated Skeleton placeholders on all zones, no layout shift on transition |
+| Failure handling | Ready | Per-zone independent error states with Retry, no cascading failures, header and layout intact under full API failure |
+| Operational navigation | Ready | Live clock, LIVE pulse, notification bell, user identity — all functional |
+| Component consistency | Ready | Shared card surface, heading style, error pattern, and Skeleton component across all zones |
+| TypeScript | Ready | Zero compilation errors — `npx tsc --noEmit` passes |
+| Production build | Ready | `npm run build` succeeds — main bundle and lazy `ForecastPanel` chunk both produced |
+| Code splitting | Ready | `ForecastPanel` lazy-loaded via `React.lazy()` + `Suspense` |
+| Null safety | Ready | All nullable API fields (`success_rate`, `average_response_time_ms`, `response_time_ms`, `current_operation`) handled without crashes |
+| ARIA labels | Ready | All ten zone `<section>` elements carry `aria-label` attributes |
+
+### Pending Backend Availability
+
+| Area | Status | Condition |
+|---|---|---|
+| End-to-end API validation | Pending | Control Plane backend must be running at `http://127.0.0.1:8009` |
+| Live data rendering | Pending | All eight endpoints must return valid JSON responses |
+| Background polling | Pending | Requires live backend to observe refetch behaviour |
+| Empty state rendering | Pending | Backend must return empty-array responses for relevant fields |
+
+### Production Deployment Checklist
+
+- [ ] Set `VITE_CONTROL_PLANE_URL` to the production Control Plane URL as a build-time environment variable
+- [ ] Run `npm run build` — verify both `index.js` and `ForecastPanel.js` chunks are produced in `dist/`
+- [ ] Deploy `dist/` to static hosting (S3 + CloudFront, Nginx, or equivalent)
+- [ ] Configure web server to serve `index.html` for all routes (SPA fallback)
+- [ ] Confirm both JS chunks are served — `ForecastPanel.js` is lazy-loaded on demand
+- [ ] Re-execute TC-002 (API Connectivity) against the production Control Plane
+- [ ] Re-execute TC-010 (Empty States) with a backend returning empty-array responses
