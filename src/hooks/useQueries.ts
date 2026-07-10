@@ -1,49 +1,83 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  fetchExecutiveMetrics,
-  fetchKPIs,
-  fetchAlerts,
-  fetchGridStatus,
-  fetchRiskScores,
-  fetchForecast,
-  fetchIncidents,
-  fetchTimeline,
-  fetchSystemHealth,
-  fetchReplayJobs,
-  fetchEvidence,
-} from "@/services/api";
+  fetchHealth,
+  fetchSystemStatus,
+  fetchMetrics,
+  fetchExecutiveDashboard,
+  fetchOperationsDashboard,
+  fetchAlertsDashboard,
+  fetchRuntimeDashboard,
+  fetchTelemetryDashboard,
+} from "@/api/endpoints";
 
-const REFETCH_INTERVAL = 30_000;
+// GET /health — lightweight liveness probe
+export const useHealth = () =>
+  useQuery({
+    queryKey: ["health"],
+    queryFn: fetchHealth,
+    refetchInterval: 10_000,
+    retry: 1,
+  });
 
-export const useExecutiveMetrics = () =>
-  useQuery({ queryKey: ["executive-metrics"], queryFn: fetchExecutiveMetrics, refetchInterval: REFETCH_INTERVAL });
+// GET /system/status → SystemHealth zone
+export const useSystemStatus = () =>
+  useQuery({
+    queryKey: ["system-status"],
+    queryFn: fetchSystemStatus,
+    refetchInterval: 5_000,
+    retry: 2,
+  });
 
-export const useKPIs = () =>
-  useQuery({ queryKey: ["kpis"], queryFn: fetchKPIs, refetchInterval: REFETCH_INTERVAL });
+// GET /metrics → Live KPIs zone
+export const useMetrics = () =>
+  useQuery({
+    queryKey: ["metrics"],
+    queryFn: fetchMetrics,
+    refetchInterval: 10_000,
+    retry: 2,
+  });
 
-export const useAlerts = () =>
-  useQuery({ queryKey: ["alerts"], queryFn: fetchAlerts, refetchInterval: 15_000 });
+// GET /dashboard/executive → Executive Summary zone
+export const useExecutiveDashboard = () =>
+  useQuery({
+    queryKey: ["dashboard-executive"],
+    queryFn: fetchExecutiveDashboard,
+    refetchInterval: 15_000,
+    retry: 2,
+  });
 
-export const useGridStatus = () =>
-  useQuery({ queryKey: ["grid-status"], queryFn: fetchGridStatus, refetchInterval: REFETCH_INTERVAL });
+// GET /dashboard/operations → Operations / Incident Queue zone
+export const useOperationsDashboard = () =>
+  useQuery({
+    queryKey: ["dashboard-operations"],
+    queryFn: fetchOperationsDashboard,
+    refetchInterval: 5_000,
+    retry: 2,
+  });
 
-export const useRiskScores = () =>
-  useQuery({ queryKey: ["risk-scores"], queryFn: fetchRiskScores, refetchInterval: REFETCH_INTERVAL });
+// GET /dashboard/alerts → Live Alert Queue zone
+export const useAlertsDashboard = () =>
+  useQuery({
+    queryKey: ["dashboard-alerts"],
+    queryFn: fetchAlertsDashboard,
+    refetchInterval: 5_000,
+    retry: 2,
+  });
 
-export const useForecast = () =>
-  useQuery({ queryKey: ["forecast"], queryFn: fetchForecast, refetchInterval: 60_000 });
+// GET /dashboard/runtime → Replay Status zone
+export const useRuntimeDashboard = () =>
+  useQuery({
+    queryKey: ["dashboard-runtime"],
+    queryFn: fetchRuntimeDashboard,
+    refetchInterval: 5_000,
+    retry: 2,
+  });
 
-export const useIncidents = () =>
-  useQuery({ queryKey: ["incidents"], queryFn: fetchIncidents, refetchInterval: REFETCH_INTERVAL });
-
-export const useTimeline = () =>
-  useQuery({ queryKey: ["timeline"], queryFn: fetchTimeline, refetchInterval: 15_000 });
-
-export const useSystemHealth = () =>
-  useQuery({ queryKey: ["system-health"], queryFn: fetchSystemHealth, refetchInterval: 20_000 });
-
-export const useReplayJobs = () =>
-  useQuery({ queryKey: ["replay"], queryFn: fetchReplayJobs, refetchInterval: 10_000 });
-
-export const useEvidence = () =>
-  useQuery({ queryKey: ["evidence"], queryFn: fetchEvidence, refetchInterval: 60_000 });
+// GET /dashboard/telemetry → Forecast / Telemetry zone
+export const useTelemetryDashboard = () =>
+  useQuery({
+    queryKey: ["dashboard-telemetry"],
+    queryFn: fetchTelemetryDashboard,
+    refetchInterval: 10_000,
+    retry: 2,
+  });
