@@ -1,59 +1,68 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+import { lazy, Suspense } from "react";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import ExecutiveSummary from "@/components/dashboard/ExecutiveSummary";
+import NationalGridStatus from "@/components/dashboard/NationalGridStatus";
+import LiveAlertQueue from "@/components/dashboard/LiveAlertQueue";
+import RiskHeatmap from "@/components/dashboard/RiskHeatmap";
+import IncidentQueue from "@/components/dashboard/IncidentQueue";
+import OperationalTimeline from "@/components/dashboard/OperationalTimeline";
+import SystemHealth from "@/components/dashboard/SystemHealth";
+import ReplayStatus from "@/components/dashboard/ReplayStatus";
+import EvidencePanel from "@/components/dashboard/EvidencePanel";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const ForecastPanel = lazy(() => import("@/components/dashboard/ForecastPanel"));
 
 export default function Dashboard() {
   return (
     <DashboardLayout>
-<main className="p-6">
+      <div className="grid grid-cols-12 gap-2.5">
 
-  <h1 className="text-3xl font-bold mb-8">
-    SHAKTI Operational Command Center
-  </h1>
+        {/* Row 1 — Executive Summary (full width) */}
+        <div className="col-span-12">
+          <ExecutiveSummary />
+        </div>
 
-  <div className="grid grid-cols-12 gap-6">
+        {/* Row 2 — Grid Status + Alert Queue */}
+        <div className="col-span-12 lg:col-span-7">
+          <NationalGridStatus />
+        </div>
+        <div className="col-span-12 lg:col-span-5">
+          <LiveAlertQueue />
+        </div>
 
-    <section className="col-span-12 bg-white rounded-xl p-6 shadow">
-      Executive Summary
-    </section>
+        {/* Row 3 — Risk Heatmap + Forecast */}
+        <div className="col-span-12 md:col-span-6 lg:col-span-4">
+          <RiskHeatmap />
+        </div>
+        <div className="col-span-12 md:col-span-6 lg:col-span-8">
+          <Suspense fallback={<Skeleton className="h-64 rounded-lg" />}>
+            <ForecastPanel />
+          </Suspense>
+        </div>
 
-    <section className="col-span-8 bg-white rounded-xl p-6 shadow h-80">
-      National Grid Status
-    </section>
+        {/* Row 4 — Incident Queue + Operational Timeline */}
+        <div className="col-span-12 md:col-span-6">
+          <IncidentQueue />
+        </div>
+        <div className="col-span-12 md:col-span-6">
+          <OperationalTimeline />
+        </div>
 
-    <section className="col-span-4 bg-white rounded-xl p-6 shadow h-80">
-      Live Alert Queue
-    </section>
+        {/* Row 5 — System Health + Replay Status */}
+        <div className="col-span-12 md:col-span-7">
+          <SystemHealth />
+        </div>
+        <div className="col-span-12 md:col-span-5">
+          <ReplayStatus />
+        </div>
 
-    <section className="col-span-6 bg-white rounded-xl p-6 shadow h-72">
-      Risk Heatmap
-    </section>
+        {/* Row 6 — Evidence Panel (full width) */}
+        <div className="col-span-12">
+          <EvidencePanel />
+        </div>
 
-    <section className="col-span-6 bg-white rounded-xl p-6 shadow h-72">
-      Forecast Panel
-    </section>
-
-    <section className="col-span-6 bg-white rounded-xl p-6 shadow h-72">
-      Incident Queue
-    </section>
-
-    <section className="col-span-6 bg-white rounded-xl p-6 shadow h-72">
-      Operational Timeline
-    </section>
-
-    <section className="col-span-6 bg-white rounded-xl p-6 shadow h-60">
-      System Health
-    </section>
-
-    <section className="col-span-6 bg-white rounded-xl p-6 shadow h-60">
-      Replay Status
-    </section>
-
-    <section className="col-span-12 bg-white rounded-xl p-6 shadow h-64">
-      Evidence Panel
-    </section>
-
-  </div>
-
-</main>
+      </div>
     </DashboardLayout>
   );
 }

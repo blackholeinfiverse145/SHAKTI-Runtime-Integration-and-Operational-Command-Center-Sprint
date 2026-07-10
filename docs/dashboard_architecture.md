@@ -1,240 +1,187 @@
-# SHAKTI Operational Command Center Dashboard Architecture
+# dashboard_architecture.md
 
 **Project:** SHAKTI Runtime Integration and Operational Command Center
 **Owner:** Pratik Bhuwad
 **Module:** Frontend Dashboard Architecture
-**Version:** 1.0
+**Version:** 2.0
+**Last Updated:** 2025
 
 ---
 
-# 1. Purpose
+## 1. Purpose
 
-The SHAKTI Operational Command Center is designed to provide a centralized operational dashboard for monitoring the national power grid. The dashboard consolidates runtime intelligence, operational alerts, forecasting insights, incident tracking, and evidence into a single interface that enables operators and executives to make informed decisions quickly.
+The SHAKTI Operational Command Center is a production-grade frontend application that provides a centralized, real-time operational interface for monitoring the national power grid. It consolidates runtime intelligence, live alerts, forecasting insights, incident tracking, system health, replay status, and operational evidence into a single command-grade interface.
 
-The primary objective is to replace static reporting with a responsive operational command center that presents real-time information in a clear, structured, and actionable manner.
-
----
-
-# 2. Objectives
-
-The dashboard architecture has been designed to achieve the following objectives:
-
-* Provide a single operational view of the entire system.
-* Display critical operational information within five seconds of opening the dashboard.
-* Minimize scrolling by organizing information into logical dashboard zones.
-* Support real-time runtime data integration.
-* Use reusable React components for maintainability and scalability.
-* Support responsive layouts for different screen sizes.
-* Separate presentation logic from backend runtime services.
-* Enable easy integration with APIs developed by other project modules.
+The dashboard is designed to replace static reporting with a responsive, information-dense operational command center that enables grid operators, regional controllers, and executive users to achieve situational awareness within five seconds of loading.
 
 ---
 
-# 3. Design Principles
+## 2. Architecture Overview
 
-The dashboard follows the following architectural principles.
-
-## 3.1 Operational First
-
-Operationally important information must always appear before analytical information. Critical alerts, grid status, and executive metrics receive the highest visual priority.
-
-## 3.2 Information Hierarchy
-
-Information is organized from high-level summaries to detailed operational data.
-
-1. Executive Summary
-2. National Grid Status
-3. Active Alerts
-4. Operational Analysis
-5. Supporting Operational Evidence
-
-This allows users to quickly understand the current system state before investigating individual incidents.
-
-## 3.3 Component Reusability
-
-Every dashboard section is composed of reusable React components.
-
-Examples include:
-
-* Executive Metric Card
-* KPI Card
-* Status Card
-* Map Card
-* Alert Card
-* Forecast Card
-* Incident Card
-* Timeline Card
-* Replay Card
-
-Reusable components improve consistency, maintainability, and future extensibility.
-
-## 3.4 Runtime Driven Architecture
-
-The dashboard does not contain business logic for forecasting, decision intelligence, or energy intelligence.
-
-Instead, it consumes runtime APIs provided by backend services and visualizes their outputs.
-
-This separation allows frontend and backend teams to develop independently.
-
-## 3.5 Low Scroll Experience
-
-The dashboard is designed as a command center rather than a traditional report.
-
-Major operational information should be visible on a single screen whenever possible, reducing navigation time during critical events.
-
----
-
-# 4. Dashboard Architecture
-
-The dashboard is divided into multiple operational zones arranged according to information priority.
+The frontend is a single-page application (SPA) built on React 19 with Vite 8 as the build toolchain. It follows a strict separation between presentation, data-fetching, and type contracts.
 
 ```
-Header
-│
-├── Executive Summary
-│
-├── National Grid Status
-│     ├── Map Card
-│     └── Status Card
-│
-├── Live Alert Queue
-│
-├── Risk Heatmap
-│
-├── Forecast Panel
-│
-├── Incident Queue
-│
-├── Operational Timeline
-│
-├── System Health
-│
-├── Replay Status
-│
-└── Evidence Panel
+┌─────────────────────────────────────────────────────────────┐
+│                     Browser (SPA)                           │
+│                                                             │
+│  ┌──────────────┐   ┌──────────────┐   ┌────────────────┐  │
+│  │  React UI    │   │ TanStack     │   │  Axios HTTP    │  │
+│  │  Components  │◄──│  Query Cache │◄──│  Client        │  │
+│  └──────────────┘   └──────────────┘   └────────────────┘  │
+│                                                │            │
+└────────────────────────────────────────────────┼────────────┘
+                                                 │
+                                    ┌────────────▼────────────┐
+                                    │   REST API Backend      │
+                                    │   (VITE_API_BASE_URL)   │
+                                    └─────────────────────────┘
 ```
 
-Each dashboard zone is responsible for presenting a specific operational domain while remaining visually consistent with the rest of the application.
+When `VITE_API_BASE_URL` is not set, the service layer activates production-contract-compatible mock data, enabling fully functional development without a live backend.
 
 ---
 
-# 5. Information Hierarchy
+## 3. Dashboard Philosophy
 
-The dashboard organizes information into three operational levels.
+The dashboard is designed as an **operational command center**, not a reporting tool. Three principles govern every design decision:
 
-## Level 1 – Immediate Awareness
-
-Displayed immediately after loading the dashboard.
-
-* Executive Summary
-* National Grid Status
-* Critical Alerts
-
-These sections answer the question:
-
-> "Is the system operating normally?"
+| Principle | Description |
+|---|---|
+| Operational First | Critical alerts, grid status, and executive metrics occupy the highest visual priority. Analytical data follows. |
+| Low Scroll | All Level 1 information is visible within the initial viewport on a 1440px display. |
+| Runtime Driven | The frontend contains zero business logic. It consumes and visualizes API outputs only. |
 
 ---
 
-## Level 2 – Operational Analysis
+## 4. Information Hierarchy
 
-Displayed below the executive overview.
+Information is organized into three operational levels, rendered top-to-bottom on the dashboard.
 
-* Risk Heatmap
-* Forecast Panel
-* Incident Queue
-
-These sections help operators understand why operational conditions have changed.
-
----
-
-## Level 3 – Investigation and Evidence
-
-Displayed in the lower section of the dashboard.
-
-* Operational Timeline
-* Replay Status
-* System Health
-* Evidence Panel
-
-These components support investigation and post-event analysis.
+| Level | Name | Zones | Purpose |
+|---|---|---|---|
+| 1 | Immediate Awareness | Executive Summary, Grid Status, Live Alerts | Answer: "Is the system normal?" |
+| 2 | Operational Analysis | Risk Heatmap, Forecast, Incident Queue | Answer: "What has changed and why?" |
+| 3 | Investigation & Evidence | Timeline, System Health, Replay, Evidence | Answer: "What happened and what supports it?" |
 
 ---
 
-# 6. Runtime Integration Strategy
+## 5. Component Hierarchy
 
-The frontend dashboard consumes runtime APIs exposed by backend services.
+```mermaid
+graph TD
+    App --> Dashboard
+    Dashboard --> DashboardLayout
+    DashboardLayout --> Header
+    DashboardLayout --> Grid["CSS Grid (12-col)"]
 
-Typical runtime endpoints include:
+    Grid --> ExecutiveSummary
+    Grid --> NationalGridStatus
+    Grid --> LiveAlertQueue
+    Grid --> RiskHeatmap
+    Grid --> ForecastPanel
+    Grid --> IncidentQueue
+    Grid --> OperationalTimeline
+    Grid --> SystemHealth
+    Grid --> ReplayStatus
+    Grid --> EvidencePanel
 
-* Executive Metrics
-* Grid Status
-* Alerts
-* Risk Analysis
-* Forecast Data
-* Incident Queue
-* Timeline Events
-* Replay Information
-* Evidence Metadata
-
-The frontend remains independent of backend implementation details by communicating only through REST API contracts.
-
----
-
-# 7. User Roles
-
-The dashboard supports multiple user personas.
-
-### Executive Users
-
-Require a high-level overview of operational status, key metrics, and critical alerts.
-
-### Grid Operators
-
-Monitor live incidents, alerts, forecasts, and runtime system health.
-
-### Regional Controllers
-
-Focus on regional grid status, operational events, and localized risk information.
-
-The interface prioritizes operational awareness while allowing deeper investigation when required.
+    ExecutiveSummary --> MetricCard["MetricCard (×4)"]
+    ExecutiveSummary --> KPICard["KPICard (×4)"]
+    NationalGridStatus --> RegionRow["RegionRow (×5)"]
+    LiveAlertQueue --> AlertRow["AlertRow (×n)"]
+    RiskHeatmap --> RiskRow["RiskRow (×5)"]
+    ForecastPanel --> AreaChart["Recharts AreaChart"]
+    IncidentQueue --> IncidentRow["IncidentRow (×n)"]
+    OperationalTimeline --> EventRow["EventRow (×n)"]
+    SystemHealth --> ServiceRow["ServiceRow (×6)"]
+    ReplayStatus --> ReplayRow["ReplayRow (×n)"]
+    EvidencePanel --> EvidenceRow["EvidenceRow (×n)"]
+```
 
 ---
 
-# 8. Technology Stack
+## 6. Runtime Data Flow
 
-Frontend technologies include:
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant QueryCache as TanStack Query Cache
+    participant ServiceLayer as src/services/api.ts
+    participant Backend as REST API / Mock
 
-* React
-* Vite
-* TypeScript
-* Tailwind CSS
-* shadcn/ui
-* CSS Grid
-* React Query
-* Axios
-* Recharts
-
-These technologies provide a modern, scalable, and maintainable frontend architecture.
-
----
-
-# 9. Future Enhancements
-
-The architecture has been designed to support future enhancements without major structural changes.
-
-Potential enhancements include:
-
-* WebSocket-based real-time updates
-* Interactive GIS mapping
-* Advanced filtering and search
-* Multi-region operational dashboards
-* User personalization
-* Role-based dashboard layouts
-* Historical analytics and replay visualization
+    Browser->>QueryCache: Component mounts, useQuery() called
+    QueryCache->>ServiceLayer: Cache miss — invoke fetch function
+    ServiceLayer->>Backend: GET /api/{endpoint}
+    Backend-->>ServiceLayer: JSON response
+    ServiceLayer-->>QueryCache: Typed data stored
+    QueryCache-->>Browser: Data delivered to component
+    Note over QueryCache: Auto-refetch on interval
+    QueryCache->>ServiceLayer: Interval fires (15s–60s)
+    ServiceLayer->>Backend: GET /api/{endpoint}
+    Backend-->>QueryCache: Updated data
+    QueryCache-->>Browser: Component re-renders with fresh data
+```
 
 ---
 
-# 10. Conclusion
+## 7. Layout Overview
 
-The SHAKTI Operational Command Center architecture provides a scalable and modular frontend foundation for real-time operational monitoring. By emphasizing reusable components, runtime API integration, and a structured information hierarchy, the dashboard enables rapid situational awareness while remaining flexible for future system enhancements.
+The dashboard uses a **12-column CSS Grid** with `gap-2.5` spacing. Each zone occupies a defined column span that adapts across breakpoints.
+
+| Row | Zone | Desktop Cols | Tablet Cols |
+|---|---|---|---|
+| 1 | Executive Summary | 12 | 12 |
+| 2 | National Grid Status | 7 | 12 |
+| 2 | Live Alert Queue | 5 | 12 |
+| 3 | Risk Heatmap | 4 | 6 |
+| 3 | Forecast Panel | 8 | 6 |
+| 4 | Incident Queue | 6 | 6 |
+| 4 | Operational Timeline | 6 | 6 |
+| 5 | System Health | 7 | 7 |
+| 5 | Replay Status | 5 | 5 |
+| 6 | Evidence Panel | 12 | 12 |
+
+---
+
+## 8. Design Principles
+
+### 8.1 Strong Typing
+All API responses, component props, and shared models are defined in `src/types/api.ts`. No `any` types are used anywhere in the codebase.
+
+### 8.2 Component Isolation
+Each dashboard zone is a self-contained component that owns its own data-fetching hook, loading state, error state, and empty state. Components do not share state with siblings.
+
+### 8.3 Memoization
+All list-row sub-components (`RegionRow`, `AlertRow`, `IncidentRow`, etc.) are wrapped in `React.memo()` to prevent unnecessary re-renders during parent refetch cycles.
+
+### 8.4 Error Resilience
+Every zone independently handles API failures with an inline error message and a retry button. A failure in one zone does not affect any other zone.
+
+### 8.5 Dark Theme
+The entire application uses a `slate-950` base with `slate-800/60` card surfaces. All color tokens are defined as Tailwind utility classes. No light mode is implemented in v1.
+
+---
+
+## 9. Technology Stack
+
+| Technology | Version | Role |
+|---|---|---|
+| React | 19.x | UI framework |
+| Vite | 8.x | Build toolchain |
+| TypeScript | 6.x | Type safety |
+| Tailwind CSS | 4.x | Utility-first styling |
+| TanStack Query | 5.x | Server state management |
+| Axios | 1.x | HTTP client |
+| Recharts | 3.x | Chart rendering (lazy-loaded) |
+| Lucide React | 1.x | Icon library |
+| clsx + tailwind-merge | latest | Class name utilities |
+
+---
+
+## 10. Scalability Considerations
+
+- **New zones** can be added by creating a component in `src/components/dashboard/`, adding a fetch function to `src/services/api.ts`, a hook to `src/hooks/useQueries.ts`, and placing it in the grid in `src/pages/Dashboard.tsx`.
+- **WebSocket support** can be added by replacing `refetchInterval` with a WebSocket subscription inside the relevant hook without changing any component.
+- **Role-based visibility** can be implemented by wrapping zone components in a permission guard at the Dashboard grid level.
+- **Multi-page routing** is supported — React Router DOM is already installed. Additional pages can be added to `src/pages/` and registered in `App.tsx`.
+- **Bundle splitting** is already active — `ForecastPanel` (Recharts) is lazy-loaded via `React.lazy()` and `Suspense`.

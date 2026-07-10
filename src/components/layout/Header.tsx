@@ -1,39 +1,50 @@
-import { Bell, Activity } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, Activity, Zap } from "lucide-react";
 
 export default function Header() {
-  return (
-    <header className="bg-white shadow-sm border-b px-8 py-4 flex items-center justify-between">
-      {/* Left */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">
-          SHAKTI
-        </h1>
+  const [time, setTime] = useState(new Date());
 
-        <p className="text-sm text-slate-500">
-          Operational Command Center
-        </p>
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <header className="bg-slate-900 border-b border-slate-700/60 px-4 py-2.5 flex items-center justify-between shrink-0">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Zap size={18} className="text-amber-400" />
+          <span className="text-base font-bold text-slate-100 tracking-tight">SHAKTI</span>
+        </div>
+        <span className="text-slate-600 text-sm hidden sm:block">|</span>
+        <span className="text-xs text-slate-500 hidden sm:block">Operational Command Center</span>
       </div>
 
-      {/* Right */}
-      <div className="flex items-center gap-6">
-
-        <div className="flex items-center gap-2 text-green-600 font-medium">
-          <Activity size={18} />
-          Live
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5 text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs font-semibold">LIVE</span>
         </div>
 
-        <Bell
-          size={22}
-          className="cursor-pointer text-slate-600"
-        />
-
-        <div className="text-right">
-          <p className="font-semibold">Operator</p>
-          <p className="text-sm text-slate-500">
-            Runtime Dashboard
-          </p>
+        <div className="text-right hidden md:block">
+          <p className="text-xs font-mono text-slate-300">{time.toLocaleTimeString("en-IN")}</p>
+          <p className="text-xs text-slate-600">{time.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</p>
         </div>
 
+        <button className="relative text-slate-500 hover:text-slate-300 transition-colors" aria-label="Notifications">
+          <Bell size={16} />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full" />
+        </button>
+
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center">
+            <span className="text-xs font-bold text-white">OP</span>
+          </div>
+          <div className="hidden sm:block text-right">
+            <p className="text-xs font-semibold text-slate-300">Operator</p>
+            <p className="text-xs text-slate-600">Grid Control</p>
+          </div>
+        </div>
       </div>
     </header>
   );
