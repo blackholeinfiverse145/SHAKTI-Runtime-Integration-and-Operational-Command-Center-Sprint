@@ -1,18 +1,18 @@
 import { lazy, Suspense } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import ExecutiveSummary from "@/components/dashboard/ExecutiveSummary";
-import NationalGridStatus from "@/components/dashboard/NationalGridStatus";
-import LiveAlertQueue from "@/components/dashboard/LiveAlertQueue";
-import RiskHeatmap from "@/components/dashboard/RiskHeatmap";
-import IncidentQueue from "@/components/dashboard/IncidentQueue";
-import OperationalTimeline from "@/components/dashboard/OperationalTimeline";
-import SystemHealth from "@/components/dashboard/SystemHealth";
-import ReplayStatus from "@/components/dashboard/ReplayStatus";
-import EvidencePanel from "@/components/dashboard/EvidencePanel";
+import ExecutiveLayout from "@/components/dashboard/layouts/ExecutiveLayout";
+import OperationsLayout from "@/components/dashboard/layouts/OperationsLayout";
+import IntegrationLayout from "@/components/dashboard/layouts/IntegrationLayout";
+import DecisionIntelligenceLayout from "@/components/dashboard/layouts/DecisionIntelligenceLayout";
+import WorkflowLayout from "@/components/dashboard/layouts/WorkflowLayout";
+import OperatorConsoleLayout from "@/components/dashboard/layouts/OperatorConsoleLayout";
+import RuntimeHealthLayout from "@/components/dashboard/layouts/RuntimeHealthLayout";
+import ReplayLayout from "@/components/dashboard/layouts/ReplayLayout";
+import EvidenceLayout from "@/components/dashboard/layouts/EvidenceLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
 
-const ForecastPanel = lazy(() => import("@/components/dashboard/ForecastPanel"));
+const ObservabilityLayout = lazy(() => import("@/components/dashboard/layouts/ObservabilityLayout"));
 
 function DashboardGrid() {
   const { zones } = useDashboardConfig();
@@ -20,67 +20,67 @@ function DashboardGrid() {
   return (
     <div className="grid grid-cols-12 gap-2.5">
 
-      {/* Row 1 — Executive Summary (full width) */}
+      {/* Row 1 — Executive */}
       {zones.executiveSummary.visible && (
         <div className={zones.executiveSummary.colSpan}>
-          <ExecutiveSummary />
+          <ExecutiveLayout />
         </div>
       )}
 
-      {/* Row 2 — Operations Grid + Alert Queue */}
+      {/* Row 2 — Operations + Integrations */}
       {zones.operationsGrid.visible && (
         <div className={zones.operationsGrid.colSpan}>
-          <NationalGridStatus />
+          <OperationsLayout />
         </div>
       )}
       {zones.liveAlerts.visible && (
         <div className={zones.liveAlerts.colSpan}>
-          <LiveAlertQueue />
+          <IntegrationLayout />
         </div>
       )}
 
-      {/* Row 3 — Risk Heatmap + Telemetry */}
+      {/* Row 3 — Decision Intelligence + Observability */}
       {zones.riskHeatmap.visible && (
         <div className={zones.riskHeatmap.colSpan}>
-          <RiskHeatmap />
+          <DecisionIntelligenceLayout />
         </div>
       )}
       {zones.telemetry.visible && (
         <div className={zones.telemetry.colSpan}>
-          <Suspense fallback={<Skeleton className="h-64 rounded-lg" />}>
-            <ForecastPanel />
+          <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+            <ObservabilityLayout />
           </Suspense>
         </div>
       )}
 
-      {/* Row 4 — Incident Queue + Operational Timeline */}
+      {/* Row 4 — Workflows + Operator Console */}
       {zones.incidentQueue.visible && (
         <div className={zones.incidentQueue.colSpan}>
-          <IncidentQueue />
+          <WorkflowLayout />
         </div>
       )}
       {zones.operationalTimeline.visible && (
         <div className={zones.operationalTimeline.colSpan}>
-          <OperationalTimeline />
+          <OperatorConsoleLayout />
         </div>
       )}
 
-      {/* Row 5 — System Health + Runtime Sessions */}
+      {/* Row 5 — Runtime Health + Replay */}
       {zones.systemHealth.visible && (
         <div className={zones.systemHealth.colSpan}>
-          <SystemHealth />
+          <RuntimeHealthLayout />
         </div>
       )}
       {zones.runtimeSessions.visible && (
         <div className={zones.runtimeSessions.colSpan}>
-          <ReplayStatus />
+          <ReplayLayout />
         </div>
       )}
 
-      {/* Row 6 — Evidence Panel (full width) */}
+      {/* Row 6 — Evidence */}
       {zones.evidencePanel.visible && (
         <div className={zones.evidencePanel.colSpan}>
-          <EvidencePanel />
+          <EvidenceLayout />
         </div>
       )}
 

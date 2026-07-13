@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { LucideIcon } from "lucide-react";
+// No lucide-react import needed if we use React.ElementType
 
 export interface EvidenceCardProps {
   /** The source of the evidence */
@@ -9,7 +9,7 @@ export interface EvidenceCardProps {
   /** Confidence score (0-100) */
   confidence: number;
   /** Optional icon to represent the evidence type */
-  icon?: LucideIcon;
+  icon?: React.ElementType;
   /** Tailwind color class for the icon (e.g. "text-emerald-400") */
   iconColor?: string;
   /** Optional secondary info (like timestamp) */

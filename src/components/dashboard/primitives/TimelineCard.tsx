@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { AlertTriangle, AlertCircle, Info, Bell, Settings, ShieldAlert, Zap, LucideIcon } from "lucide-react";
+import { AlertTriangle, AlertCircle, Info, Bell, Settings, ShieldAlert, Zap } from "lucide-react";
 import { severityColor } from "@/utils/format";
 import type { Severity } from "@/types/api";
 
@@ -18,7 +18,7 @@ export interface TimelineCardProps {
   isLast?: boolean;
 }
 
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
   system:    Settings,
   operator:  Info,
   alert:     AlertTriangle,

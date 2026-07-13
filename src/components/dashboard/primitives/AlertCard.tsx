@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { AlertTriangle, AlertCircle, Info, CheckCircle, LucideIcon } from "lucide-react";
+import { AlertTriangle, AlertCircle, Info, CheckCircle } from "lucide-react";
 import { severityColor, severityBg } from "@/utils/format";
 import type { Severity } from "@/types/api";
 
@@ -18,7 +18,7 @@ export interface AlertCardProps {
   acknowledged?: boolean;
 }
 
-const SEVERITY_ICONS: Record<Severity, LucideIcon> = {
+const SEVERITY_ICONS: Record<Severity, React.ElementType> = {
   critical: AlertTriangle,
   high: AlertCircle,
   medium: AlertCircle,

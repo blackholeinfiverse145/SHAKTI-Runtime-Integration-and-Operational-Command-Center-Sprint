@@ -21,52 +21,52 @@ export const defaultDashboardConfig: DashboardConfig = {
   zones: {
     executiveSummary: {
       visible: true,
-      label: "Executive Summary",
+      label: "Executive Layout",
       colSpan: "col-span-12",
     },
     operationsGrid: {
       visible: true,
-      label: "Operations Grid",
+      label: "Operations Layout",
       colSpan: "col-span-12 lg:col-span-7",
     },
     liveAlerts: {
       visible: true,
-      label: "Live Alerts",
+      label: "Integration Layout",
       colSpan: "col-span-12 lg:col-span-5",
     },
     riskHeatmap: {
       visible: true,
-      label: "Risk Heatmap",
+      label: "Decision Intelligence Layout",
       colSpan: "col-span-12 md:col-span-6 lg:col-span-4",
     },
     telemetry: {
       visible: true,
-      label: "Telemetry",
+      label: "Observability Layout",
       colSpan: "col-span-12 md:col-span-6 lg:col-span-8",
     },
     incidentQueue: {
       visible: true,
-      label: "Operations Queue",
+      label: "Workflow Layout",
       colSpan: "col-span-12 md:col-span-6",
     },
     operationalTimeline: {
       visible: true,
-      label: "Operational Timeline",
+      label: "Operator Console Layout",
       colSpan: "col-span-12 md:col-span-6",
     },
     systemHealth: {
       visible: true,
-      label: "System Health",
+      label: "Runtime Health Layout",
       colSpan: "col-span-12 md:col-span-7",
     },
     runtimeSessions: {
       visible: true,
-      label: "Runtime Sessions",
+      label: "Replay Layout",
       colSpan: "col-span-12 md:col-span-5",
     },
     evidencePanel: {
       visible: true,
-      label: "Evidence Panel",
+      label: "Evidence Layout",
       colSpan: "col-span-12",
     },
   },
