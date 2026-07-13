@@ -57,6 +57,8 @@ export function DashboardCard({
   return (
     <section
       aria-label={ariaLabel ?? title}
+      aria-live="polite"
+      aria-atomic="true"
       className={cn(
         "bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2",
         className,

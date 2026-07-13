@@ -1,7 +1,8 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { DecisionCard } from "@/components/dashboard/primitives/DecisionCard";
 import { CapabilityCard } from "@/components/dashboard/primitives/CapabilityCard";
+
 import { useOperationsDashboard } from "@/hooks/useQueries";
 import { toSeverity } from "@/utils/format";
 
@@ -9,7 +10,7 @@ export default memo(function DecisionIntelligenceLayout() {
   const { data, isLoading, isError, refetch } = useOperationsDashboard();
 
   // Synthesize decisions and capabilities from operations data to showcase layout
-  const decisions = data?.operations.slice(0, 2).map(op => ({
+  const decisions = useMemo(() => data?.operations.slice(0, 2).map(op => ({
     id: op.id,
     action: op.type.includes("Backup") ? "Initiated Failover Sequence" : `Scaled ${op.type} Resources`,
     actor: "SHAKTI AI Supervisor",
@@ -17,10 +18,10 @@ export default memo(function DecisionIntelligenceLayout() {
     status: op.progress === 100 ? "executed" as const : "pending_approval" as const,
     severity: toSeverity(op.priority),
     isAutomated: true,
-  })) ?? [];
+  })) ?? [], [data?.operations]);
 
-  const loadSheddingActive = data ? data.system_load > 85 : false;
-  const autoScalingActive = data ? data.active_operations > 5 : false;
+  const loadSheddingActive = useMemo(() => data ? data.system_load > 85 : false, [data?.system_load]);
+  const autoScalingActive = useMemo(() => data ? data.active_operations > 5 : false, [data?.active_operations]);
 
   return (
     <DashboardCard

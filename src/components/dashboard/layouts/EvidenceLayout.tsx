@@ -1,14 +1,15 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Activity, Clock, Zap, TrendingUp } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { EvidenceCard } from "@/components/dashboard/primitives/EvidenceCard";
+
 import { useTelemetryDashboard } from "@/hooks/useQueries";
 import { formatTime } from "@/utils/format";
 
 export default memo(function EvidenceLayout() {
   const { data, isLoading, isError, refetch } = useTelemetryDashboard();
 
-  const records = data
+  const records = useMemo(() => data
     ? [
         {
           id: "uptime",
@@ -43,7 +44,7 @@ export default memo(function EvidenceLayout() {
           description: `Current error rate is ${(data.summary.error_rate * 100).toFixed(2)}%. No critical anomalies detected.`,
         },
       ]
-    : [];
+    : [], [data]);
 
   return (
     <DashboardCard

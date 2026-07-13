@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Activity, AlertTriangle, Bell, Zap } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { ExecutiveMetricCard } from "@/components/dashboard/primitives/ExecutiveMetricCard";
@@ -16,24 +16,24 @@ export default memo(function ExecutiveLayout() {
   const exec = useExecutiveDashboard();
   const metrics = useMetrics();
 
-  const metricCards = exec.data?.summary.map((item, i) => ({
+  const metricCards = useMemo(() => exec.data?.summary.map((item, i) => ({
     id: item.metric,
     title: item.metric.replace(/_/g, " "),
     value: item.value,
     trend: toTrend(item.trend),
     status: toStatus(item.status),
     icon: METRIC_ICONS[i % 4] ?? Activity,
-  })) ?? [];
+  })) ?? [], [exec.data?.summary]);
 
   const m = metrics.data;
-  const kpiCards = m
+  const kpiCards = useMemo(() => m
     ? [
         { id: "requests",  title: "Total Requests",   value: m.total_requests,                                    unit: "req",  trend: "stable" as const },
         { id: "success",   title: "Success Rate",     value: m.success_rate != null ? m.success_rate.toFixed(1) : "—", unit: "%", trend: (m.success_rate ?? 100) >= 95 ? "up" : ("down" as const) },
         { id: "resp_time", title: "Avg Response",     value: m.average_response_time_ms != null ? m.average_response_time_ms.toFixed(0) : "—", unit: "ms", trend: "stable" as const },
         { id: "events",    title: "Events Processed", value: m.events_processed,                                  unit: "evt",  trend: "up" as const },
       ]
-    : [];
+    : [], [m]);
 
   const isLoading = exec.isLoading || metrics.isLoading;
   const isError = !isLoading && (exec.isError || metrics.isError);

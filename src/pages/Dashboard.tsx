@@ -1,14 +1,14 @@
 import { lazy, Suspense } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import ExecutiveLayout from "@/components/dashboard/layouts/ExecutiveLayout";
-import OperationsLayout from "@/components/dashboard/layouts/OperationsLayout";
-import IntegrationLayout from "@/components/dashboard/layouts/IntegrationLayout";
-import DecisionIntelligenceLayout from "@/components/dashboard/layouts/DecisionIntelligenceLayout";
-import WorkflowLayout from "@/components/dashboard/layouts/WorkflowLayout";
-import OperatorConsoleLayout from "@/components/dashboard/layouts/OperatorConsoleLayout";
-import RuntimeHealthLayout from "@/components/dashboard/layouts/RuntimeHealthLayout";
-import ReplayLayout from "@/components/dashboard/layouts/ReplayLayout";
-import EvidenceLayout from "@/components/dashboard/layouts/EvidenceLayout";
+const ExecutiveLayout = lazy(() => import("@/components/dashboard/layouts/ExecutiveLayout"));
+const OperationsLayout = lazy(() => import("@/components/dashboard/layouts/OperationsLayout"));
+const IntegrationLayout = lazy(() => import("@/components/dashboard/layouts/IntegrationLayout"));
+const DecisionIntelligenceLayout = lazy(() => import("@/components/dashboard/layouts/DecisionIntelligenceLayout"));
+const WorkflowLayout = lazy(() => import("@/components/dashboard/layouts/WorkflowLayout"));
+const OperatorConsoleLayout = lazy(() => import("@/components/dashboard/layouts/OperatorConsoleLayout"));
+const RuntimeHealthLayout = lazy(() => import("@/components/dashboard/layouts/RuntimeHealthLayout"));
+const ReplayLayout = lazy(() => import("@/components/dashboard/layouts/ReplayLayout"));
+const EvidenceLayout = lazy(() => import("@/components/dashboard/layouts/EvidenceLayout"));
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
@@ -25,7 +25,9 @@ function DashboardGrid() {
       {zones.executiveSummary.visible && (
         <div className={zones.executiveSummary.colSpan}>
           <ErrorBoundary fallbackTitle="Executive Summary Crashed">
-            <ExecutiveLayout />
+            <Suspense fallback={<Skeleton className="h-32 rounded-lg bg-slate-800/40" />}>
+              <ExecutiveLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
@@ -34,14 +36,18 @@ function DashboardGrid() {
       {zones.operationsGrid.visible && (
         <div className={zones.operationsGrid.colSpan}>
           <ErrorBoundary fallbackTitle="Operations Crashed">
-            <OperationsLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <OperationsLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {zones.liveAlerts.visible && (
         <div className={zones.liveAlerts.colSpan}>
           <ErrorBoundary fallbackTitle="Integrations Crashed">
-            <IntegrationLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <IntegrationLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
@@ -50,7 +56,9 @@ function DashboardGrid() {
       {zones.riskHeatmap.visible && (
         <div className={zones.riskHeatmap.colSpan}>
           <ErrorBoundary fallbackTitle="Intelligence Crashed">
-            <DecisionIntelligenceLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <DecisionIntelligenceLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
@@ -68,14 +76,18 @@ function DashboardGrid() {
       {zones.incidentQueue.visible && (
         <div className={zones.incidentQueue.colSpan}>
           <ErrorBoundary fallbackTitle="Workflows Crashed">
-            <WorkflowLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <WorkflowLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {zones.operationalTimeline.visible && (
         <div className={zones.operationalTimeline.colSpan}>
           <ErrorBoundary fallbackTitle="Operator Console Crashed">
-            <OperatorConsoleLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <OperatorConsoleLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
@@ -84,14 +96,18 @@ function DashboardGrid() {
       {zones.systemHealth.visible && (
         <div className={zones.systemHealth.colSpan}>
           <ErrorBoundary fallbackTitle="Health Crashed">
-            <RuntimeHealthLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <RuntimeHealthLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {zones.runtimeSessions.visible && (
         <div className={zones.runtimeSessions.colSpan}>
           <ErrorBoundary fallbackTitle="Replay Crashed">
-            <ReplayLayout />
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <ReplayLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
@@ -100,7 +116,9 @@ function DashboardGrid() {
       {zones.evidencePanel.visible && (
         <div className={zones.evidencePanel.colSpan}>
           <ErrorBoundary fallbackTitle="Evidence Crashed">
-            <EvidenceLayout />
+            <Suspense fallback={<Skeleton className="h-48 rounded-lg bg-slate-800/40" />}>
+              <EvidenceLayout />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}

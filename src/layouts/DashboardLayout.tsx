@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import Header from "@/components/layout/Header";
+import { useNetworkState } from "@/hooks/useNetworkState";
+import { WifiOff } from "lucide-react";
 import { DashboardProvider } from "@/components/dashboard/DashboardProvider";
 import type { DashboardConfigOverride } from "@/types/dashboard.types";
 
@@ -10,9 +12,17 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children, config }: DashboardLayoutProps) {
+  const { isOnline } = useNetworkState();
+
   return (
     <DashboardProvider config={config}>
       <div className="min-h-screen bg-slate-950 flex flex-col text-slate-100">
+        {!isOnline && (
+          <div className="bg-red-500/20 text-red-100 text-xs py-1.5 px-4 flex items-center justify-center gap-2 border-b border-red-500/30 font-medium">
+            <WifiOff size={14} className="animate-pulse" />
+            System Offline — Dashboard is running on cached data. Reconnecting...
+          </div>
+        )}
         <Header />
         <main className="flex-1 overflow-auto p-3">{children}</main>
       </div>
