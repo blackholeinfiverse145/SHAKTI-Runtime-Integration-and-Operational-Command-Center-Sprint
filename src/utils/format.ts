@@ -1,4 +1,4 @@
-import type { Severity, OperationalStatus, TrendDirection } from "@/types/api";
+import type { Severity, OperationalStatus, TrendDirection, IncidentStatus, ReplayState } from "@/types/api";
 
 export function formatRelativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -64,4 +64,43 @@ export function trendColor(trend: TrendDirection, inverse = false): string {
 
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
+}
+
+// ─── Runtime → UI type mappers ────────────────────────────────────────────────
+// Consolidated from duplicate local functions in dashboard components.
+// Maps untyped runtime API strings to strongly-typed UI enums.
+
+export function toSeverity(s: string): Severity {
+  if (s === "critical" || s === "high" || s === "medium" || s === "low" || s === "info") return s;
+  return "info";
+}
+
+export function toStatus(s: string): OperationalStatus {
+  if (s === "normal" || s === "operational") return "online";
+  if (s === "warning") return "warning";
+  if (s === "critical" || s === "offline") return "offline";
+  if (s === "degraded") return "degraded";
+  return "online";
+}
+
+export function toTrend(t: string): TrendDirection {
+  if (t === "up" || t === "down" || t === "stable") return t;
+  return "stable";
+}
+
+export function toIncidentStatus(s: string): IncidentStatus {
+  if (s === "running")   return "investigating";
+  if (s === "completed") return "resolved";
+  if (s === "failed")    return "closed";
+  if (s === "pending")   return "open";
+  if (s === "paused")    return "open";
+  return "open";
+}
+
+export function toReplayState(s: string): ReplayState {
+  if (s === "active")    return "running";
+  if (s === "completed") return "completed";
+  if (s === "failed")    return "failed";
+  if (s === "idle")      return "idle";
+  return "idle";
 }

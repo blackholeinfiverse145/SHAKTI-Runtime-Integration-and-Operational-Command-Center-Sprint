@@ -1,15 +1,10 @@
 import { memo } from "react";
 import { AlertTriangle, AlertCircle, Info, CheckCircle } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useAlertsDashboard } from "@/hooks/useQueries";
-import { severityColor, severityBg, formatRelativeTime } from "@/utils/format";
+import { toSeverity, severityColor, severityBg, formatRelativeTime } from "@/utils/format";
 import type { Severity } from "@/types/api";
 import type { AlertItem } from "@/types/runtime";
-
-function toSeverity(s: string): Severity {
-  if (s === "critical" || s === "high" || s === "medium" || s === "low" || s === "info") return s;
-  return "info";
-}
 
 const SEVERITY_ICONS: Record<Severity, React.ElementType> = {
   critical: AlertTriangle,
@@ -45,40 +40,29 @@ export default function LiveAlertQueue() {
   const unacked = data?.unacknowledged ?? 0;
 
   return (
-    <section aria-label="Live Alert Queue" className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Live Alerts</h2>
-        {unacked > 0 && (
+    <DashboardCard
+      title="Live Alerts"
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage="Failed to load alerts"
+      skeletonCount={4}
+      skeletonHeight="h-14"
+      isEmpty={data?.alerts.length === 0}
+      emptyMessage="No active alerts"
+      headerRight={
+        unacked > 0 ? (
           <span className="bg-red-500/20 text-red-400 text-xs font-bold px-1.5 py-0.5 rounded-full border border-red-500/30">
             {unacked} new
           </span>
-        )}
-      </div>
-
-      {isLoading && (
-        <div className="space-y-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 bg-slate-700/50 rounded" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-6 gap-2">
-          <p className="text-xs text-red-400">Failed to load alerts</p>
-          <button onClick={() => refetch()} className="text-xs text-slate-400 hover:text-slate-200 underline">
-            Retry
-          </button>
-        </div>
-      )}
-
+        ) : undefined
+      }
+    >
       {data && (
         <div className="space-y-1.5 overflow-y-auto max-h-64 pr-0.5">
-          {data.alerts.length === 0
-            ? <p className="text-xs text-slate-500 text-center py-4">No active alerts</p>
-            : data.alerts.map((a) => <AlertRow key={a.id} alert={a} />)}
+          {data.alerts.map((a) => <AlertRow key={a.id} alert={a} />)}
         </div>
       )}
-    </section>
+    </DashboardCard>
   );
 }

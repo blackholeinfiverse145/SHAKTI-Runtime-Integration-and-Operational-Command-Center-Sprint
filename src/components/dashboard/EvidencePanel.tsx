@@ -1,5 +1,5 @@
-import { BarChart2, Activity, Zap, Clock, TrendingUp } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Activity, Zap, Clock, TrendingUp } from "lucide-react";
+import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useTelemetryDashboard } from "@/hooks/useQueries";
 import { formatTime } from "@/utils/format";
 
@@ -58,33 +58,16 @@ export default function EvidencePanel() {
     : [];
 
   return (
-    <section aria-label="Evidence Panel" className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-1">
-      <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Evidence Panel</h2>
-        {data && (
-          <span className="text-xs text-slate-500">
-            {formatTime(data.timestamp)}
-          </span>
-        )}
-      </div>
-
-      {isLoading && (
-        <div className="grid grid-cols-2 gap-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 bg-slate-700/50 rounded" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-4 gap-2">
-          <p className="text-xs text-red-400">Failed to load evidence</p>
-          <button onClick={() => refetch()} className="text-xs text-slate-400 hover:text-slate-200 underline">
-            Retry
-          </button>
-        </div>
-      )}
-
+    <DashboardCard
+      title="Evidence Panel"
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage="Failed to load evidence"
+      skeletonCount={4}
+      skeletonHeight="h-16"
+      headerRight={data ? <span className="text-xs text-slate-500">{formatTime(data.timestamp)}</span> : undefined}
+    >
       {data && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
           {records.map((ev) => (
@@ -101,6 +84,6 @@ export default function EvidencePanel() {
           ))}
         </div>
       )}
-    </section>
+    </DashboardCard>
   );
 }

@@ -2,27 +2,10 @@ import { memo } from "react";
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, Zap, Bell, Activity } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useExecutiveDashboard, useMetrics } from "@/hooks/useQueries";
-import { statusColor, trendColor, trendIcon } from "@/utils/format";
+import { statusColor, trendColor, trendIcon, toTrend, toStatus } from "@/utils/format";
 import type { TrendDirection, OperationalStatus } from "@/types/api";
 
-// ─── Helpers — map runtime strings to UI types ────────────────────────────────
-
-function toTrend(t: string): TrendDirection {
-  if (t === "up" || t === "down" || t === "stable") return t;
-  return "stable";
-}
-
-function toStatus(s: string): OperationalStatus {
-  if (s === "normal" || s === "operational") return "online";
-  if (s === "warning") return "warning";
-  if (s === "critical" || s === "offline") return "offline";
-  if (s === "degraded") return "degraded";
-  return "online";
-}
-
-const ICONS: Record<string, React.ElementType> = {
-  AlertTriangle, Zap, Bell, Activity,
-};
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const METRIC_ICONS: Record<number, React.ElementType> = {
   0: AlertTriangle,
@@ -111,32 +94,49 @@ export default function ExecutiveSummary() {
     : [];
 
   const isLoading = exec.isLoading || metrics.isLoading;
+  const isError = !isLoading && (exec.isError || metrics.isError);
 
   return (
     <section aria-label="Executive Summary" className="col-span-12 space-y-2">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => (
+      {isLoading ? (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-20 rounded-lg bg-slate-700/50" />
-            ))
-          : metricCards.length > 0
-            ? metricCards.map((mc) => (
-                <MetricCard key={mc.id} title={mc.title} value={mc.value} trend={mc.trend} status={mc.status} icon={mc.icon} />
-              ))
-            : Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 rounded-lg bg-slate-700/30" />
-              ))}
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => (
+            ))}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-14 rounded-lg bg-slate-700/50" />
-            ))
-          : kpiCards.map((k) => (
+            ))}
+          </div>
+        </>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center py-6 gap-2">
+          <p className="text-xs text-red-400">Failed to load executive data</p>
+          <button
+            onClick={() => { exec.refetch(); metrics.refetch(); }}
+            className="text-xs text-slate-400 hover:text-slate-200 underline"
+          >
+            Retry
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {metricCards.length > 0
+              ? metricCards.map((mc) => (
+                  <MetricCard key={mc.id} title={mc.title} value={mc.value} trend={mc.trend} status={mc.status} icon={mc.icon} />
+                ))
+              : <p className="text-xs text-slate-500 text-center py-6 col-span-full">No executive metrics available</p>}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {kpiCards.map((k) => (
               <KPICard key={k.id} title={k.title} value={k.value} unit={k.unit} trend={k.trend} />
             ))}
-      </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }

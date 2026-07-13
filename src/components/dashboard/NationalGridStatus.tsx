@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { RefreshCw } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useOperationsDashboard } from "@/hooks/useQueries";
 import { formatTime } from "@/utils/format";
 import type { OperationItem } from "@/types/runtime";
@@ -52,9 +52,16 @@ export default function NationalGridStatus() {
   const { data, isLoading, isError, refetch, isFetching } = useOperationsDashboard();
 
   return (
-    <section aria-label="National Grid Status" className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Operations Grid</h2>
+    <DashboardCard
+      title="Operations Grid"
+      ariaLabel="National Grid Status"
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage="Failed to load operations"
+      skeletonCount={5}
+      skeletonHeight="h-7"
+      headerRight={
         <button
           onClick={() => refetch()}
           className="text-slate-500 hover:text-slate-300 transition-colors"
@@ -62,25 +69,8 @@ export default function NationalGridStatus() {
         >
           <RefreshCw size={12} className={isFetching ? "animate-spin" : ""} />
         </button>
-      </div>
-
-      {isLoading && (
-        <div className="space-y-2">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-7 bg-slate-700/50 rounded" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-6 gap-2">
-          <p className="text-xs text-red-400">Failed to load operations</p>
-          <button onClick={() => refetch()} className="text-xs text-slate-400 hover:text-slate-200 underline">
-            Retry
-          </button>
-        </div>
-      )}
-
+      }
+    >
       {data && (
         <>
           <div className="grid grid-cols-3 gap-2 mb-1">
@@ -112,6 +102,6 @@ export default function NationalGridStatus() {
           </p>
         </>
       )}
-    </section>
+    </DashboardCard>
   );
 }

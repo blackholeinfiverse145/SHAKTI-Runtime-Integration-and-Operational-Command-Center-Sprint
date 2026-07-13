@@ -1,23 +1,9 @@
 import { memo } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useOperationsDashboard } from "@/hooks/useQueries";
-import { severityColor, severityBg, formatRelativeTime } from "@/utils/format";
-import type { Severity, IncidentStatus } from "@/types/api";
+import { toSeverity, toIncidentStatus, severityColor, severityBg, formatRelativeTime } from "@/utils/format";
+import type { IncidentStatus } from "@/types/api";
 import type { OperationItem } from "@/types/runtime";
-
-function toSeverity(p: string): Severity {
-  if (p === "critical" || p === "high" || p === "medium" || p === "low") return p;
-  return "info";
-}
-
-function toIncidentStatus(s: string): IncidentStatus {
-  if (s === "running")   return "investigating";
-  if (s === "completed") return "resolved";
-  if (s === "failed")    return "closed";
-  if (s === "pending")   return "open";
-  if (s === "paused")    return "open";
-  return "open";
-}
 
 const STATUS_COLOR: Record<IncidentStatus, string> = {
   open: "text-red-400",
@@ -62,38 +48,24 @@ export default function IncidentQueue() {
   const active = data?.active_operations ?? 0;
 
   return (
-    <section aria-label="Incident Queue" className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Operations Queue</h2>
-        {data && (
-          <span className="text-xs text-slate-500">{active} active</span>
-        )}
-      </div>
-
-      {isLoading && (
-        <div className="space-y-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 bg-slate-700/50 rounded" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-6 gap-2">
-          <p className="text-xs text-red-400">Failed to load operations</p>
-          <button onClick={() => refetch()} className="text-xs text-slate-400 hover:text-slate-200 underline">
-            Retry
-          </button>
-        </div>
-      )}
-
+    <DashboardCard
+      title="Operations Queue"
+      ariaLabel="Incident Queue"
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage="Failed to load operations"
+      skeletonCount={4}
+      skeletonHeight="h-16"
+      isEmpty={data?.operations.length === 0}
+      emptyMessage="No active operations"
+      headerRight={data ? <span className="text-xs text-slate-500">{active} active</span> : undefined}
+    >
       {data && (
         <div className="space-y-1.5 overflow-y-auto max-h-64">
-          {data.operations.length === 0
-            ? <p className="text-xs text-slate-500 text-center py-4">No active operations</p>
-            : data.operations.map((op) => <OperationRow key={op.id} op={op} />)}
+          {data.operations.map((op) => <OperationRow key={op.id} op={op} />)}
         </div>
       )}
-    </section>
+    </DashboardCard>
   );
 }

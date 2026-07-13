@@ -1,18 +1,9 @@
 import { memo } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useSystemStatus } from "@/hooks/useQueries";
-import { statusColor, statusDot, formatTime } from "@/utils/format";
+import { toStatus, statusColor, statusDot, formatTime } from "@/utils/format";
 import type { OperationalStatus } from "@/types/api";
 import type { ComponentStatus } from "@/types/runtime";
-
-// Map runtime status strings to UI OperationalStatus
-function toStatus(s: string): OperationalStatus {
-  if (s === "operational") return "online";
-  if (s === "degraded")    return "degraded";
-  if (s === "offline")     return "offline";
-  if (s === "warning")     return "warning";
-  return "online";
-}
 
 // Map overall_status to a 0–100 score for the progress bar
 function toScore(s: string, components: ComponentStatus[]): number {
@@ -46,33 +37,22 @@ export default function SystemHealth() {
   const score = data ? toScore(data.overall_status, data.components) : 0;
 
   return (
-    <section aria-label="System Health" className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">System Health</h2>
-        {data && (
+    <DashboardCard
+      title="System Health"
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage="Failed to load system health"
+      skeletonCount={6}
+      skeletonHeight="h-7"
+      headerRight={
+        data ? (
           <span className={`text-xs font-bold ${statusColor(toStatus(data.overall_status))}`}>
             {data.overall_status}
           </span>
-        )}
-      </div>
-
-      {isLoading && (
-        <div className="space-y-2">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-7 bg-slate-700/50 rounded" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-6 gap-2">
-          <p className="text-xs text-red-400">Failed to load system health</p>
-          <button onClick={() => refetch()} className="text-xs text-slate-400 hover:text-slate-200 underline">
-            Retry
-          </button>
-        </div>
-      )}
-
+        ) : undefined
+      }
+    >
       {data && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -101,6 +81,6 @@ export default function SystemHealth() {
           </p>
         </>
       )}
-    </section>
+    </DashboardCard>
   );
 }

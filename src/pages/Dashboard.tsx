@@ -10,59 +10,88 @@ import SystemHealth from "@/components/dashboard/SystemHealth";
 import ReplayStatus from "@/components/dashboard/ReplayStatus";
 import EvidencePanel from "@/components/dashboard/EvidencePanel";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
 
 const ForecastPanel = lazy(() => import("@/components/dashboard/ForecastPanel"));
 
-export default function Dashboard() {
-  return (
-    <DashboardLayout>
-      <div className="grid grid-cols-12 gap-2.5">
+function DashboardGrid() {
+  const { zones } = useDashboardConfig();
 
-        {/* Row 1 — Executive Summary (full width) */}
-        <div className="col-span-12">
+  return (
+    <div className="grid grid-cols-12 gap-2.5">
+
+      {/* Row 1 — Executive Summary (full width) */}
+      {zones.executiveSummary.visible && (
+        <div className={zones.executiveSummary.colSpan}>
           <ExecutiveSummary />
         </div>
+      )}
 
-        {/* Row 2 — Grid Status + Alert Queue */}
-        <div className="col-span-12 lg:col-span-7">
+      {/* Row 2 — Operations Grid + Alert Queue */}
+      {zones.operationsGrid.visible && (
+        <div className={zones.operationsGrid.colSpan}>
           <NationalGridStatus />
         </div>
-        <div className="col-span-12 lg:col-span-5">
+      )}
+      {zones.liveAlerts.visible && (
+        <div className={zones.liveAlerts.colSpan}>
           <LiveAlertQueue />
         </div>
+      )}
 
-        {/* Row 3 — Risk Heatmap + Forecast */}
-        <div className="col-span-12 md:col-span-6 lg:col-span-4">
+      {/* Row 3 — Risk Heatmap + Telemetry */}
+      {zones.riskHeatmap.visible && (
+        <div className={zones.riskHeatmap.colSpan}>
           <RiskHeatmap />
         </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-8">
+      )}
+      {zones.telemetry.visible && (
+        <div className={zones.telemetry.colSpan}>
           <Suspense fallback={<Skeleton className="h-64 rounded-lg" />}>
             <ForecastPanel />
           </Suspense>
         </div>
+      )}
 
-        {/* Row 4 — Incident Queue + Operational Timeline */}
-        <div className="col-span-12 md:col-span-6">
+      {/* Row 4 — Incident Queue + Operational Timeline */}
+      {zones.incidentQueue.visible && (
+        <div className={zones.incidentQueue.colSpan}>
           <IncidentQueue />
         </div>
-        <div className="col-span-12 md:col-span-6">
+      )}
+      {zones.operationalTimeline.visible && (
+        <div className={zones.operationalTimeline.colSpan}>
           <OperationalTimeline />
         </div>
+      )}
 
-        {/* Row 5 — System Health + Replay Status */}
-        <div className="col-span-12 md:col-span-7">
+      {/* Row 5 — System Health + Runtime Sessions */}
+      {zones.systemHealth.visible && (
+        <div className={zones.systemHealth.colSpan}>
           <SystemHealth />
         </div>
-        <div className="col-span-12 md:col-span-5">
+      )}
+      {zones.runtimeSessions.visible && (
+        <div className={zones.runtimeSessions.colSpan}>
           <ReplayStatus />
         </div>
+      )}
 
-        {/* Row 6 — Evidence Panel (full width) */}
-        <div className="col-span-12">
+      {/* Row 6 — Evidence Panel (full width) */}
+      {zones.evidencePanel.visible && (
+        <div className={zones.evidencePanel.colSpan}>
           <EvidencePanel />
         </div>
+      )}
 
-      </div>
+    </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <DashboardLayout>
+      <DashboardGrid />
     </DashboardLayout>
   );
 }

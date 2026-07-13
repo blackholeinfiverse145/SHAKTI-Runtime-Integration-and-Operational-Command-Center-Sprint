@@ -1,18 +1,10 @@
 import { memo } from "react";
 import { Play, CheckCircle, Pause, XCircle, Clock } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useRuntimeDashboard } from "@/hooks/useQueries";
-import { formatRelativeTime } from "@/utils/format";
+import { toReplayState, formatRelativeTime } from "@/utils/format";
 import type { ReplayState } from "@/types/api";
 import type { RuntimeSession } from "@/types/runtime";
-
-function toReplayState(s: string): ReplayState {
-  if (s === "active")    return "running";
-  if (s === "completed") return "completed";
-  if (s === "failed")    return "failed";
-  if (s === "idle")      return "idle";
-  return "idle";
-}
 
 const STATE_CONFIG: Record<ReplayState, { icon: React.ElementType; color: string; bar: string }> = {
   running:   { icon: Play,        color: "text-blue-400",    bar: "bg-blue-500" },
@@ -62,38 +54,24 @@ export default function ReplayStatus() {
   const { data, isLoading, isError, refetch } = useRuntimeDashboard();
 
   return (
-    <section aria-label="Replay Status" className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Runtime Sessions</h2>
-        {data && (
-          <span className="text-xs text-slate-500">{data.active_sessions} active</span>
-        )}
-      </div>
-
-      {isLoading && (
-        <div className="space-y-2">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 bg-slate-700/50 rounded" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-6 gap-2">
-          <p className="text-xs text-red-400">Failed to load runtime sessions</p>
-          <button onClick={() => refetch()} className="text-xs text-slate-400 hover:text-slate-200 underline">
-            Retry
-          </button>
-        </div>
-      )}
-
+    <DashboardCard
+      title="Runtime Sessions"
+      ariaLabel="Replay Status"
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage="Failed to load runtime sessions"
+      skeletonCount={2}
+      skeletonHeight="h-20"
+      isEmpty={data?.sessions.length === 0}
+      emptyMessage="No active sessions"
+      headerRight={data ? <span className="text-xs text-slate-500">{data.active_sessions} active</span> : undefined}
+    >
       {data && (
         <div className="space-y-2">
-          {data.sessions.length === 0
-            ? <p className="text-xs text-slate-500 text-center py-4">No active sessions</p>
-            : data.sessions.map((s) => <SessionRow key={s.session_id} session={s} />)}
+          {data.sessions.map((s) => <SessionRow key={s.session_id} session={s} />)}
         </div>
       )}
-    </section>
+    </DashboardCard>
   );
 }
