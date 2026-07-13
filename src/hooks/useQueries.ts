@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   fetchHealth,
   fetchSystemStatus,
@@ -16,7 +16,7 @@ export const useHealth = () =>
     queryKey: ["health"],
     queryFn: fetchHealth,
     refetchInterval: 10_000,
-    retry: 1,
+    placeholderData: keepPreviousData,
   });
 
 // GET /system/status → SystemHealth zone
@@ -25,7 +25,7 @@ export const useSystemStatus = () =>
     queryKey: ["system-status"],
     queryFn: fetchSystemStatus,
     refetchInterval: 5_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });
 
 // GET /metrics → Live KPIs zone
@@ -34,7 +34,7 @@ export const useMetrics = () =>
     queryKey: ["metrics"],
     queryFn: fetchMetrics,
     refetchInterval: 10_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });
 
 // GET /dashboard/executive → Executive Summary zone
@@ -43,7 +43,7 @@ export const useExecutiveDashboard = () =>
     queryKey: ["dashboard-executive"],
     queryFn: fetchExecutiveDashboard,
     refetchInterval: 15_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });
 
 // GET /dashboard/operations → Operations / Incident Queue zone
@@ -52,7 +52,7 @@ export const useOperationsDashboard = () =>
     queryKey: ["dashboard-operations"],
     queryFn: fetchOperationsDashboard,
     refetchInterval: 5_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });
 
 // GET /dashboard/alerts → Live Alert Queue zone
@@ -61,7 +61,7 @@ export const useAlertsDashboard = () =>
     queryKey: ["dashboard-alerts"],
     queryFn: fetchAlertsDashboard,
     refetchInterval: 5_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });
 
 // GET /dashboard/runtime → Replay Status zone
@@ -70,7 +70,7 @@ export const useRuntimeDashboard = () =>
     queryKey: ["dashboard-runtime"],
     queryFn: fetchRuntimeDashboard,
     refetchInterval: 5_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });
 
 // GET /dashboard/telemetry → Forecast / Telemetry zone
@@ -79,5 +79,5 @@ export const useTelemetryDashboard = () =>
     queryKey: ["dashboard-telemetry"],
     queryFn: fetchTelemetryDashboard,
     refetchInterval: 10_000,
-    retry: 2,
+    placeholderData: keepPreviousData,
   });

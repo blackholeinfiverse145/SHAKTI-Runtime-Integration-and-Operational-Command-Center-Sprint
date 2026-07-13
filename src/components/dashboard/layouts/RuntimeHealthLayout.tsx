@@ -21,6 +21,7 @@ export default memo(function RuntimeHealthLayout() {
       title="Runtime Health"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load system health"
       skeletonCount={6}

@@ -50,6 +50,7 @@ export default memo(function EvidenceLayout() {
       title="Evidence & Intelligence"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load evidence"
       skeletonCount={4}

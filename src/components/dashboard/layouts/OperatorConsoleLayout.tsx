@@ -20,6 +20,7 @@ export default memo(function OperatorConsoleLayout() {
       ariaLabel="Operator Console Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load timeline"
       skeletonCount={5}

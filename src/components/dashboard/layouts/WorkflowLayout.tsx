@@ -25,6 +25,7 @@ export default memo(function WorkflowLayout() {
       ariaLabel="Workflow Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load workflows"
       skeletonCount={3}

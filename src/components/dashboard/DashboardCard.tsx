@@ -18,6 +18,8 @@ interface DashboardCardProps {
   isLoading?: boolean;
   /** Show error state with retry button */
   isError?: boolean;
+  /** True if we have valid data (even if stale). Triggers graceful degradation UI if isError is also true. */
+  hasData?: boolean;
   /** Callback for the retry button in error state */
   onRetry?: () => void;
   /** Error message shown in error state */
@@ -42,6 +44,7 @@ export function DashboardCard({
   headerRight,
   isLoading = false,
   isError = false,
+  hasData = false,
   onRetry,
   errorMessage = "Failed to load data",
   isEmpty = false,
@@ -72,7 +75,7 @@ export function DashboardCard({
             <Skeleton key={i} className={`${skeletonHeight} bg-slate-700/50 rounded`} />
           ))}
         </div>
-      ) : isError ? (
+      ) : isError && !hasData ? (
         <div className="flex flex-col items-center justify-center py-6 gap-2">
           <p className="text-xs text-red-400">{errorMessage}</p>
           {onRetry && (
@@ -87,7 +90,22 @@ export function DashboardCard({
       ) : isEmpty ? (
         <p className="text-xs text-slate-500 text-center py-4">{emptyMessage}</p>
       ) : (
-        children
+        <>
+          {isError && hasData && (
+            <div className="text-[10px] text-yellow-500 bg-yellow-500/10 px-2 py-1.5 rounded mb-2 flex items-center justify-between border border-yellow-500/20">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+                Using cached data (Connection lost)
+              </span>
+              {onRetry && (
+                <button onClick={onRetry} className="underline hover:text-yellow-400 transition-colors">
+                  Retry
+                </button>
+              )}
+            </div>
+          )}
+          {children}
+        </>
       )}
     </section>
   );

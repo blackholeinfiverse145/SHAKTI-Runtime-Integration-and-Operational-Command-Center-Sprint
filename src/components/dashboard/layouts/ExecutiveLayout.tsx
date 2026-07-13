@@ -44,6 +44,7 @@ export default memo(function ExecutiveLayout() {
         title="Executive Summary"
         isLoading={isLoading}
         isError={isError}
+        hasData={exec.data !== undefined && metrics.data !== undefined}
         onRetry={() => { exec.refetch(); metrics.refetch(); }}
         errorMessage="Failed to load executive data"
         skeletonCount={2}

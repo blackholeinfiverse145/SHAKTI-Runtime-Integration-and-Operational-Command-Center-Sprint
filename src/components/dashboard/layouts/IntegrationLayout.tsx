@@ -23,6 +23,7 @@ export default memo(function IntegrationLayout() {
       ariaLabel="Integration Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load alerts"
       skeletonCount={4}

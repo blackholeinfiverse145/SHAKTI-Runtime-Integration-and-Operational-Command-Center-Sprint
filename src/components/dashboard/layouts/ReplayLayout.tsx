@@ -13,6 +13,7 @@ export default memo(function ReplayLayout() {
       ariaLabel="Replay Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load replay sessions"
       skeletonCount={2}

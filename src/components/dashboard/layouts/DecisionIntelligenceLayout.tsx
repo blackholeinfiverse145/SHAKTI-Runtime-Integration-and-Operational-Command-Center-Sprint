@@ -28,6 +28,7 @@ export default memo(function DecisionIntelligenceLayout() {
       ariaLabel="Decision Intelligence Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load intelligence data"
       skeletonCount={4}

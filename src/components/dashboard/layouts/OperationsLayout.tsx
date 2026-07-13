@@ -15,6 +15,7 @@ export default memo(function OperationsLayout() {
       ariaLabel="Operations Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load operations"
       skeletonCount={5}

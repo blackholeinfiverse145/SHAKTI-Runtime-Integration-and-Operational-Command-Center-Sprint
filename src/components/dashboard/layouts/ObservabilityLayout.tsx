@@ -33,6 +33,7 @@ export default memo(function ObservabilityLayout() {
       ariaLabel="Observability Layout"
       isLoading={isLoading}
       isError={isError}
+      hasData={data !== undefined}
       onRetry={refetch}
       errorMessage="Failed to load telemetry"
       skeletonCount={1}
