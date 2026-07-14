@@ -53,17 +53,17 @@ export const StatusCard = memo(function StatusCard({
   return (
     <div className="flex items-center gap-3 py-1.5 border-b border-slate-700/40 last:border-0">
       <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
-      <span className="text-sm text-slate-300 w-24 shrink-0 truncate" title={label}>{label}</span>
+      <span className="text-[13px] font-medium text-slate-200 w-24 shrink-0 truncate" title={label}>{label}</span>
       <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${bar}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-xs text-slate-400 w-10 text-right">{pct}%</span>
+      <span className="text-[11px] text-slate-400 w-10 text-right font-mono">{pct}%</span>
       {secondaryText ? (
-        <span className={`text-xs font-medium w-16 text-right capitalize ${text}`}>
+        <span className={`text-[11.5px] font-bold w-16 text-right capitalize ${text}`}>
           {secondaryText}
         </span>
       ) : (
-        <span className={`text-xs font-medium w-16 text-right capitalize ${text}`}>
+        <span className={`text-[11.5px] font-bold w-16 text-right capitalize ${text}`}>
           {severity}
         </span>
       )}

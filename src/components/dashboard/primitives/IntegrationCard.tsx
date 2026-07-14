@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Link2, Link2Off, ExternalLink } from "lucide-react";
+import { Link2, Link2Off } from "lucide-react";
 import { statusColor } from "@/utils/format";
 import type { OperationalStatus } from "@/types/api";
 
@@ -27,24 +27,24 @@ export const IntegrationCard = memo(function IntegrationCard({
   const Icon = isOnline ? Link2 : Link2Off;
 
   return (
-    <div className="flex items-center justify-between p-2.5 bg-slate-800/30 border border-slate-700/40 rounded-lg">
-      <div className="flex items-center gap-2.5">
-        <div className={`p-1.5 rounded bg-slate-700/50 ${statusColor(status)}`}>
+    <div className="flex items-center justify-between p-2 bg-slate-800/30 border border-slate-700/40 rounded-lg gap-2 min-w-0">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <div className={`p-1.5 rounded bg-slate-700/50 ${statusColor(status)} shrink-0`}>
           <Icon size={14} />
         </div>
-        <div>
-          <div className="flex items-center gap-1.5">
-            <p className="text-xs font-semibold text-slate-200">{systemName}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <p className="text-xs font-semibold text-slate-200 truncate" title={systemName}>{systemName}</p>
             {protocol && (
-              <span className="text-[9px] px-1 bg-slate-700 text-slate-400 rounded-sm uppercase">{protocol}</span>
+              <span className="text-[9px] px-1 bg-slate-700 text-slate-400 rounded-sm uppercase shrink-0">{protocol}</span>
             )}
           </div>
-          <p className="text-[10px] text-slate-500 mt-0.5">
+          <p className="text-[10px] text-slate-500 mt-0.5 truncate" title={`${isOnline ? "Connected" : "Disconnected"}${syncStatus ? ` · ${syncStatus}` : ""}`}>
             {isOnline ? "Connected" : "Disconnected"} {syncStatus ? `· ${syncStatus}` : ""}
           </p>
         </div>
       </div>
-      <div className="text-right">
+      <div className="text-right shrink-0">
         <span className={`text-[10px] font-bold uppercase tracking-wider ${statusColor(status)}`}>
           {status}
         </span>

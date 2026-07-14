@@ -29,13 +29,13 @@ export const DecisionCard = memo(function DecisionCard({
   const Icon = status === "executed" ? ShieldCheck : status === "rejected" ? AlertCircle : Crosshair;
   
   return (
-    <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-lg">
+    <div className="p-2 bg-slate-800/40 border border-slate-700/50 rounded-lg">
       <div className="flex gap-2 items-start">
         <Icon size={16} className={`shrink-0 mt-0.5 ${severityColor(severity)}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <p className="text-xs font-semibold text-slate-200 truncate">{action}</p>
-            <span className={`text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${
+            <p className="text-[13px] font-semibold text-slate-200 truncate">{action}</p>
+            <span className={`text-[11px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${
               status === "executed" ? "text-emerald-400 bg-emerald-500/10" : 
               status === "rejected" ? "text-red-400 bg-red-500/10" : 
               "text-yellow-400 bg-yellow-500/10"
@@ -43,8 +43,8 @@ export const DecisionCard = memo(function DecisionCard({
               {status.replace('_', ' ')}
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 leading-snug mb-2">{reason}</p>
-          <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+          <p className="text-[12px] text-slate-400 leading-snug mb-1">{reason}</p>
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
             {isAutomated ? <Bot size={10} className="text-indigo-400" /> : null}
             <span>By: <strong className="text-slate-300">{actor}</strong></span>
           </div>

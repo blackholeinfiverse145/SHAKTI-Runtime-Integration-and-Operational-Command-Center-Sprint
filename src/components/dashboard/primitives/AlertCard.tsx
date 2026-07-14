@@ -40,23 +40,23 @@ export const AlertCard = memo(function AlertCard({
     <div className={`flex gap-2 p-2 rounded border transition-opacity ${severityBg(severity)} ${acknowledged ? "opacity-50" : "opacity-100"}`}>
       <Icon size={14} className={`shrink-0 mt-0.5 ${severityColor(severity)}`} />
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-slate-200 leading-snug line-clamp-2" title={message}>
+        <p className="text-[13px] text-slate-200 leading-snug line-clamp-2" title={message}>
           {message}
         </p>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-          <span className={`text-[10px] font-bold uppercase tracking-wider ${severityColor(severity)}`}>
+          <span className={`text-[11px] font-bold uppercase tracking-wider ${severityColor(severity)}`}>
             {severity}
           </span>
-          <span className="text-[10px] text-slate-400 px-1.5 py-0.5 bg-slate-800/50 rounded">
+          <span className="text-[11px] text-slate-400 px-1.5 py-0.5 bg-slate-800/50 rounded border border-slate-700/30">
             {source}
           </span>
           {category && (
-            <span className="text-[10px] text-slate-500">
+            <span className="text-[11px] text-slate-500">
               {category}
             </span>
           )}
           {timestamp && (
-            <span className="text-[10px] text-slate-500 ml-auto font-mono">
+            <span className="text-[11px] text-slate-500 ml-auto font-mono">
               {timestamp}
             </span>
           )}

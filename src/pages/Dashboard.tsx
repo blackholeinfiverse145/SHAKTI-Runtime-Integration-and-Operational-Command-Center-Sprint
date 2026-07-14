@@ -19,7 +19,7 @@ function DashboardGrid() {
   const { zones } = useDashboardConfig();
 
   return (
-    <div className="grid grid-cols-12 gap-2.5">
+    <div className="grid grid-cols-12 gap-2">
 
       {/* Row 1 — Executive */}
       {zones.executiveSummary.visible && (

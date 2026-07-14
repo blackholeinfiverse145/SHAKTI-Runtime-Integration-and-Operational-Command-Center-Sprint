@@ -47,12 +47,12 @@ export const defaultDashboardConfig: DashboardConfig = {
     incidentQueue: {
       visible: true,
       label: "Workflow Layout",
-      colSpan: "col-span-12 md:col-span-6",
+      colSpan: "col-span-12 lg:col-span-7",
     },
     operationalTimeline: {
       visible: true,
       label: "Operator Console Layout",
-      colSpan: "col-span-12 md:col-span-6",
+      colSpan: "col-span-12 lg:col-span-5",
     },
     systemHealth: {
       visible: true,

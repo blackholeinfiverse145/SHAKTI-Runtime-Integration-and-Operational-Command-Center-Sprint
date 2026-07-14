@@ -49,19 +49,23 @@ export const RuntimeCard = memo(function RuntimeCard({
           <div className="flex items-center gap-1 text-[10px] text-slate-500 uppercase">
             <Cpu size={10} /> CPU
           </div>
-          <span className="text-sm font-semibold text-slate-300">{cpuUsage.toFixed(1)}%</span>
+          <span className="text-sm font-semibold text-slate-300">
+            {typeof cpuUsage === 'number' ? cpuUsage.toFixed(1) : '0.0'}%
+          </span>
         </div>
         <div className="flex flex-col gap-1 border-l border-slate-700/50 pl-2">
           <div className="flex items-center gap-1 text-[10px] text-slate-500 uppercase">
             <Activity size={10} /> RAM
           </div>
-          <span className="text-sm font-semibold text-slate-300">{memoryUsage.toFixed(1)}%</span>
+          <span className="text-sm font-semibold text-slate-300">
+            {typeof memoryUsage === 'number' ? memoryUsage.toFixed(1) : '0.0'}%
+          </span>
         </div>
         <div className="flex flex-col gap-1 border-l border-slate-700/50 pl-2">
           <div className="flex items-center gap-1 text-[10px] text-slate-500 uppercase">
             <AlertTriangle size={10} /> Conn
           </div>
-          <span className="text-sm font-semibold text-slate-300">{connections}</span>
+          <span className="text-sm font-semibold text-slate-300">{connections ?? 0}</span>
         </div>
       </div>
     </div>

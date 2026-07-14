@@ -57,7 +57,7 @@ export const TimelineCard = memo(function TimelineCard({
           <div className="w-px h-full min-h-6 bg-slate-700/60 my-1 group-hover:bg-slate-600 transition-colors" />
         )}
       </div>
-      <div className={`flex-1 min-w-0 pb-4 ${isLast ? "" : ""}`}>
+      <div className={`flex-1 min-w-0 pb-2 ${isLast ? "" : ""}`}>
         <p className="text-[13px] text-slate-200 leading-snug">{message}</p>
         <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
           <span className="text-[10px] text-slate-400 px-1.5 py-0.5 bg-slate-800/60 rounded border border-slate-700/50">

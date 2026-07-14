@@ -30,7 +30,7 @@ export default memo(function OperationsLayout() {
       }
     >
       {data && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 h-full">
           <div className="grid grid-cols-2 gap-2">
             <RuntimeCard 
               id="node-primary" 
@@ -48,19 +48,28 @@ export default memo(function OperationsLayout() {
             />
           </div>
 
-          <div>
-            <h3 className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2 border-b border-slate-700/50 pb-1">Active Operations</h3>
-            {data.operations.length === 0
-              ? <p className="text-xs text-slate-500 text-center py-3">No operations running</p>
-              : data.operations.map((op) => (
-                  <StatusCard 
-                    key={op.id}
-                    label={op.type}
-                    severity={toSeverity(op.priority)}
-                    progress={op.progress}
-                    statusTheme={op.status === "running" ? "running" : op.status === "failed" ? "failed" : "pending"}
-                  />
-                ))}
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between border-b border-slate-700/60 mb-1.5 pb-0.5">
+              <h3 className="text-sm font-semibold text-slate-300">Active Operations</h3>
+              {data.operations.length > 4 && (
+                <span className="text-[10px] text-indigo-400 font-mono font-bold">
+                  +{data.operations.length - 4} more
+                </span>
+              )}
+            </div>
+            <div className="space-y-0.5 overflow-y-auto flex-1 min-h-0 pr-1">
+              {data.operations.length === 0
+                ? <p className="text-xs text-slate-500 text-center py-3">No operations running</p>
+                : data.operations.slice(0, 4).map((op) => (
+                    <StatusCard 
+                      key={op.id}
+                      label={op.type}
+                      severity={toSeverity(op.priority)}
+                      progress={op.progress}
+                      statusTheme={op.status === "running" ? "running" : op.status === "failed" ? "failed" : "pending"}
+                    />
+                  ))}
+            </div>
           </div>
         </div>
       )}

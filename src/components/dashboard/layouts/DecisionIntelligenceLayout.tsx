@@ -10,7 +10,7 @@ export default memo(function DecisionIntelligenceLayout() {
   const { data, isLoading, isError, refetch } = useOperationsDashboard();
 
   // Synthesize decisions and capabilities from operations data to showcase layout
-  const decisions = useMemo(() => data?.operations.slice(0, 2).map(op => ({
+  const decisions = useMemo(() => data?.operations.slice(0, 1).map(op => ({
     id: op.id,
     action: op.type.includes("Backup") ? "Initiated Failover Sequence" : `Scaled ${op.type} Resources`,
     actor: "SHAKTI AI Supervisor",
@@ -38,7 +38,7 @@ export default memo(function DecisionIntelligenceLayout() {
       emptyMessage="No automated decisions active"
     >
       {data && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2.5 h-full">
           <div className="grid grid-cols-2 gap-2">
             <CapabilityCard 
               name="Predictive Scaling"
@@ -54,9 +54,9 @@ export default memo(function DecisionIntelligenceLayout() {
             />
           </div>
 
-          <div>
-            <h3 className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2 border-b border-slate-700/50 pb-1">Recent Decisions</h3>
-            <div className="space-y-2">
+          <div className="flex-1 flex flex-col min-h-0">
+            <h3 className="text-sm font-semibold text-slate-300 mb-1.5 border-b border-slate-700/60 pb-0.5">Recent Decisions</h3>
+            <div className="space-y-1 overflow-y-auto flex-1 min-h-0">
               {decisions.map(d => (
                 <DecisionCard 
                   key={d.id}

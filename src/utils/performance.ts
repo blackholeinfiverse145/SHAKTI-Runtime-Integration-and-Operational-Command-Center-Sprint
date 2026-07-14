@@ -13,8 +13,8 @@ export function onRenderCallback(
   phase: "mount" | "update", 
   actualDuration: number, 
   baseDuration: number, 
-  startTime: number, 
-  commitTime: number
+  _startTime: number, 
+  _commitTime: number
 ) {
   if (actualDuration > 16) {
     // Log if rendering takes longer than a single frame (~16ms)

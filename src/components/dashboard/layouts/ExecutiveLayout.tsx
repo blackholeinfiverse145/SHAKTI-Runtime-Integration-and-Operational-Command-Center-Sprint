@@ -28,10 +28,10 @@ export default memo(function ExecutiveLayout() {
   const m = metrics.data;
   const kpiCards = useMemo(() => m
     ? [
-        { id: "requests",  title: "Total Requests",   value: m.total_requests,                                    unit: "req",  trend: "stable" as const },
-        { id: "success",   title: "Success Rate",     value: m.success_rate != null ? m.success_rate.toFixed(1) : "—", unit: "%", trend: (m.success_rate ?? 100) >= 95 ? "up" : ("down" as const) },
-        { id: "resp_time", title: "Avg Response",     value: m.average_response_time_ms != null ? m.average_response_time_ms.toFixed(0) : "—", unit: "ms", trend: "stable" as const },
-        { id: "events",    title: "Events Processed", value: m.events_processed,                                  unit: "evt",  trend: "up" as const },
+        { id: "requests",  title: "Total Requests",   value: m.total_requests ?? 0,                                    unit: "req",  trend: "stable" as const },
+        { id: "success",   title: "Success Rate",     value: typeof m.success_rate === 'number' ? m.success_rate.toFixed(1) : "—", unit: "%", trend: ((m.success_rate ?? 100) >= 95 ? "up" : "down") as any },
+        { id: "resp_time", title: "Avg Response",     value: typeof m.average_response_time_ms === 'number' ? m.average_response_time_ms.toFixed(0) : "—", unit: "ms", trend: "stable" as const },
+        { id: "events",    title: "Events Processed", value: m.events_processed ?? 0,                                  unit: "evt",  trend: "up" as const },
       ]
     : [], [m]);
 

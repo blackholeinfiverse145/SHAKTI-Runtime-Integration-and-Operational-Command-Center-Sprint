@@ -18,8 +18,9 @@ export interface EvidenceCardProps {
   noBorder?: boolean;
 }
 
-function ConfidenceBar({ value }: { value: number }) {
-  const clamped = Math.min(100, Math.max(0, value));
+export function ConfidenceBar({ value }: { value: number }) {
+  const numValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+  const clamped = Math.min(100, Math.max(0, numValue));
   const color = clamped >= 90 ? "bg-emerald-500" : clamped >= 70 ? "bg-yellow-500" : "bg-red-500";
   return (
     <div className="flex items-center gap-1.5">

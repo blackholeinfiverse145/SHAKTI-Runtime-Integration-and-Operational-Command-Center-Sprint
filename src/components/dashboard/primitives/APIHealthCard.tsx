@@ -38,20 +38,20 @@ export const APIHealthCard = memo(function APIHealthCard({
       <div className="grid grid-cols-4 gap-2">
         <div className="flex flex-col gap-1">
           <span className="flex items-center gap-1 text-[9px] text-slate-500 uppercase"><Activity size={9} /> Uptime</span>
-          <span className={`text-xs font-semibold ${uptime >= 99.9 ? "text-emerald-400" : "text-yellow-400"}`}>
-            {uptime.toFixed(2)}%
+          <span className={`text-xs font-semibold ${(uptime ?? 0) >= 99.9 ? "text-emerald-400" : "text-yellow-400"}`}>
+            {typeof uptime === 'number' ? uptime.toFixed(2) : '0.00'}%
           </span>
         </div>
         <div className="flex flex-col gap-1">
           <span className="flex items-center gap-1 text-[9px] text-slate-500 uppercase"><AlertTriangle size={9} /> Errors</span>
-          <span className={`text-xs font-semibold ${errorRate > 1 ? "text-red-400" : "text-slate-300"}`}>
-            {errorRate.toFixed(2)}%
+          <span className={`text-xs font-semibold ${(errorRate ?? 0) > 1 ? "text-red-400" : "text-slate-300"}`}>
+            {typeof errorRate === 'number' ? errorRate.toFixed(2) : '0.00'}%
           </span>
         </div>
         <div className="flex flex-col gap-1">
           <span className="flex items-center gap-1 text-[9px] text-slate-500 uppercase"><Clock size={9} /> Latency</span>
           <span className="text-xs font-semibold text-slate-300">
-            {latency.toFixed(0)}<span className="text-[9px] text-slate-500 ml-0.5">ms</span>
+            {typeof latency === 'number' ? latency.toFixed(0) : '0'}<span className="text-[9px] text-slate-500 ml-0.5">ms</span>
           </span>
         </div>
         {rpm != null && (

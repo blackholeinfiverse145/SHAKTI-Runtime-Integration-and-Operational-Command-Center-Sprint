@@ -60,12 +60,12 @@ export function DashboardCard({
       aria-live="polite"
       aria-atomic="true"
       className={cn(
-        "bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2",
+        "bg-slate-800/60 border border-slate-700/50 rounded-lg p-2 flex flex-col gap-1.5 h-full",
         className,
       )}
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
+        <h2 className="text-[13.5px] font-semibold text-slate-200">
           {title}
         </h2>
         {headerRight}

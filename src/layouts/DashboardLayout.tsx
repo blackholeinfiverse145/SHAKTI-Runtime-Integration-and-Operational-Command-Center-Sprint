@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Header from "@/components/layout/Header";
 import { useNetworkState } from "@/hooks/useNetworkState";
 import { WifiOff } from "lucide-react";

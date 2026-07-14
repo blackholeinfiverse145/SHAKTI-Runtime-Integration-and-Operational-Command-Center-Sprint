@@ -37,8 +37,8 @@ export default memo(function IntegrationLayout() {
       }
     >
       {data && (
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="flex flex-col gap-4 h-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
             {integrations.map(int => (
               <IntegrationCard 
                 key={int.name}
@@ -51,13 +51,13 @@ export default memo(function IntegrationLayout() {
             ))}
           </div>
 
-          <div>
-            <h3 className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2 border-b border-slate-700/50 pb-1">Live Alert Feed</h3>
+          <div className="flex-1 flex flex-col min-h-0">
+            <h3 className="text-sm font-semibold text-slate-300 mb-2 border-b border-slate-700/60 pb-1">Live Alert Feed</h3>
             {data.alerts.length === 0 ? (
               <p className="text-xs text-slate-500 text-center py-4">No active alerts</p>
             ) : (
-              <div className="space-y-1.5 overflow-y-auto max-h-64 pr-1">
-                {data.alerts.map((a) => (
+              <div className="space-y-1.5 overflow-y-auto flex-1 min-h-0 pr-1">
+                {(data.alerts ?? []).map((a) => (
                   <AlertCard 
                     key={a.id}
                     message={a.message}

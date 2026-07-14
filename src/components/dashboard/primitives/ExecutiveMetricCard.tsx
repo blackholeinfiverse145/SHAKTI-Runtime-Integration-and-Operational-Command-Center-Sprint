@@ -36,20 +36,20 @@ export const ExecutiveMetricCard = memo(function ExecutiveMetricCard({
   
   if (variant === "compact") {
     return (
-      <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-3 flex items-center justify-between">
+      <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-2.5 flex items-center justify-between">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-wide">{title}</p>
-          <p className="text-lg font-semibold text-slate-200 mt-0.5">
+          <p className="text-[12.5px] text-slate-400 font-semibold leading-none">{title}</p>
+          <p className="text-[20px] font-bold text-slate-100 mt-1.5 leading-none">
             {value ?? "—"}
-            {unit && <span className="text-xs text-slate-400 ml-1">{unit}</span>}
+            {unit && <span className="text-xs text-slate-500 font-semibold ml-0.5">{unit}</span>}
           </p>
         </div>
         <div className="flex flex-col items-end">
-          <span className={`text-sm font-medium ${trendColor(trend)}`}>
+          <span className={`text-xs font-semibold ${trendColor(trend)} leading-none`}>
             {trendIcon(trend)}
           </span>
           {trendValue && (
-            <span className="text-xs text-slate-500">{trendValue}</span>
+            <span className="text-[10px] text-slate-500 font-mono leading-none mt-0.5">{trendValue}</span>
           )}
         </div>
       </div>
@@ -57,17 +57,17 @@ export const ExecutiveMetricCard = memo(function ExecutiveMetricCard({
   }
 
   return (
-    <div className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 flex flex-col gap-2">
+    <div className="bg-slate-800/60 border border-slate-700/50 rounded-lg p-2.5 flex flex-col gap-1.5 justify-between">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">{title}</span>
+        <span className="text-[12.5px] text-slate-400 font-semibold uppercase tracking-wider leading-none">{title}</span>
         {Icon && <Icon size={14} className={statusColor(status)} />}
       </div>
-      <div className="flex items-end justify-between">
-        <span className="text-2xl font-bold text-slate-100 leading-none">
+      <div className="flex items-baseline justify-between mt-1">
+        <span className="text-3xl font-extrabold text-slate-100 tracking-tight leading-none">
           {value}
-          {unit && <span className="text-sm text-slate-400 ml-1">{unit}</span>}
+          {unit && <span className="text-xs text-slate-500 font-semibold ml-0.5">{unit}</span>}
         </span>
-        <span className={`inline-flex items-center gap-0.5 text-xs font-medium ${trendColor(trend)}`}>
+        <span className={`inline-flex items-center gap-0.5 text-[11px] font-bold leading-none ${trendColor(trend)}`}>
           <TrendIcon size={11} />
           {trendValue || (trend === "up" ? "↑" : trend === "down" ? "↓" : "→")}
         </span>

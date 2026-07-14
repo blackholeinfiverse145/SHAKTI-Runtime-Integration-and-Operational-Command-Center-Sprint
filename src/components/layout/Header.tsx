@@ -18,10 +18,10 @@ export default function Header() {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
           <LogoIcon size={18} className="text-amber-400" />
-          <span className="text-base font-bold text-slate-100 tracking-tight">{branding.systemName}</span>
+          <span className="text-[21px] font-bold text-slate-100 tracking-tight">{branding.systemName}</span>
         </div>
         <span className="text-slate-600 text-sm hidden sm:block">|</span>
-        <span className="text-xs text-slate-500 hidden sm:block">{branding.subtitle}</span>
+        <span className="text-[13px] text-slate-400 hidden sm:block">{branding.subtitle}</span>
       </div>
 
       <div className="flex items-center gap-4">

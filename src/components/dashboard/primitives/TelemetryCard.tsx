@@ -33,13 +33,13 @@ const CustomTooltip = ({
 }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-slate-900/95 backdrop-blur border border-slate-700 shadow-xl rounded-md p-2 text-xs space-y-1.5 z-50">
+    <div className="bg-slate-900/95 backdrop-blur border border-slate-700 shadow-xl rounded-md p-2 text-[12.5px] space-y-1.5 z-50">
       <p className="text-slate-400 font-medium pb-1 border-b border-slate-800/50">{label}</p>
       {payload.map((p: any) => (
         <div key={p.name} className="flex items-center gap-2 justify-between">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-            <span className="text-slate-300">{p.name}</span>
+            <span className="text-slate-350">{p.name}</span>
           </div>
           <span className="font-semibold text-slate-100" style={{ color: p.color }}>
             {typeof p.value === 'number' ? p.value.toFixed(1) : p.value}
@@ -65,10 +65,10 @@ export const TelemetryCard = memo(function TelemetryCard({
         <div className={`grid gap-2 grid-cols-${Math.min(summaryMetrics.length, 4)}`}>
           {summaryMetrics.map((sm, i) => (
             <div key={i} className="bg-slate-700/30 border border-slate-600/30 rounded p-2">
-              <p className="text-[10px] text-slate-400 uppercase tracking-wider">{sm.label}</p>
-              <p className="text-sm font-bold text-slate-200 mt-0.5">
+              <p className="text-[12px] text-slate-400 font-semibold uppercase tracking-wider">{sm.label}</p>
+              <p className="text-[14px] font-bold text-slate-200 mt-0.5">
                 {sm.value}
-                {sm.unit && <span className="text-[10px] font-normal text-slate-500 ml-1">{sm.unit}</span>}
+                {sm.unit && <span className="text-[11px] font-normal text-slate-500 ml-1">{sm.unit}</span>}
               </p>
             </div>
           ))}
@@ -88,14 +88,14 @@ export const TelemetryCard = memo(function TelemetryCard({
             </defs>
             <XAxis 
               dataKey={xAxisKey} 
-              tick={{ fontSize: 9, fill: "#64748b" }} 
+              tick={{ fontSize: 11, fill: "#64748b" }} 
               tickLine={false} 
               axisLine={false} 
               interval="preserveEnd"
               minTickGap={20}
             />
             <YAxis 
-              tick={{ fontSize: 9, fill: "#64748b" }} 
+              tick={{ fontSize: 11, fill: "#64748b" }} 
               tickLine={false} 
               axisLine={false} 
             />
@@ -123,7 +123,7 @@ export const TelemetryCard = memo(function TelemetryCard({
 
       <div className="flex gap-4 justify-end flex-wrap mt-1">
         {series.map(s => (
-          <span key={s.dataKey} className="flex items-center gap-1.5 text-[10px] text-slate-400">
+          <span key={s.dataKey} className="flex items-center gap-1.5 text-[12px] text-slate-400 font-medium">
             <span className="w-2.5 h-0.5 rounded-full" style={{ backgroundColor: s.color }} />
             {s.name}
           </span>
