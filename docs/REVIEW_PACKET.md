@@ -1,22 +1,139 @@
-# Executive Review Packet
+# SHAKTI Command Center — Review Packet
 
-**Project:** SHAKTI Executive Dashboard Capability
-**Phase:** 6 (Production Hardening Complete)
-**Status:** Ready for Final Review
+## Project Identity
 
-## 1. Project Objectives Acheived
-1. **Reusable Ecosystem Capability:** The dashboard was transitioned from a bespoke, hardcoded UI into a dynamic, configuration-driven system. Multiple government agencies can now instantiate this dashboard with different Zone configurations without writing new React code.
-2. **Resilience & Fault Tolerance:** The frontend is strictly decoupled from backend stability. If a single endpoint goes down, the affected zone degrades gracefully (showing cached data or localized error states) while the rest of the application remains fully functional.
-3. **Performance Optimization:** Through the implementation of `React.lazy`, `<Suspense>`, and aggressive `useMemo` caching, the dashboard now chunks efficiently and renders smoothly under load.
+| Field | Value |
+|---|---|
+| **Project** | SHAKTI Runtime Integration and Operational Command Center |
+| **Repository** | `blackholeinfiverse145/SHAKTI-Runtime-Integration-and-Operational-Command-Center-Sprint` |
+| **Stack** | React 19 · TypeScript 6 · Vite 8 · TanStack Query 5 · Recharts 3 · Tailwind CSS 4 |
+| **Backend** | FastAPI on `http://127.0.0.1:8009` |
+| **Build Status** | ✅ Zero TypeScript errors · ✅ Production build passes |
 
-## 2. Key Architecture Decisions
-- **Primitive + Wrapper Pattern:** No monolithic layouts. Every zone is built by passing simple Primitives (e.g., `ExecutiveMetricCard`) into a standardized `DashboardCard` wrapper.
-- **Offline First Approach:** A global network state listener provides real-time feedback to operators if connectivity is lost.
-- **Frontend Governance:** Mocks for Authentication and Role-Based Access Control (RBAC) have been implemented, establishing a clear pathway for integrating real Identity Providers.
+---
 
-## 3. Sign-off Criteria
-Please review the following artifacts to ensure compliance with operational standards:
-- [x] Code architecture aligns with `docs/ARCHITECTURE.md`.
-- [x] UI adheres to the constraints in `docs/COMPONENT_LIBRARY.md`.
-- [x] The Vite production build executes without errors or type warnings.
-- [x] Graceful degradation has been manually verified via network throttling.
+## Architecture Summary
+
+### Application Structure
+```
+src/
+├── api/              # Axios client + typed endpoint functions
+├── components/
+│   ├── dashboard/
+│   │   ├── DashboardCard.tsx       # Universal card wrapper (5 states)
+│   │   ├── DashboardProvider.tsx   # Config context provider
+│   │   ├── layouts/                # 10 zone layout components
+│   │   └── primitives/             # 15 reusable primitive cards
+│   ├── layout/
+│   │   └── Header.tsx              # Global dashboard header
+│   ├── ui/
+│   │   └── skeleton.tsx            # Loading skeleton component
+│   └── ErrorBoundary.tsx           # Zone-isolated crash recovery
+├── config/
+│   └── dashboard.config.ts         # Default SHAKTI configuration
+├── hooks/                          # 4 custom hooks
+├── layouts/
+│   └── DashboardLayout.tsx         # Root layout with offline banner
+├── pages/
+│   └── Dashboard.tsx               # Main dashboard grid page
+├── types/                          # 3 type definition files
+└── utils/                          # Format helpers + logger
+```
+
+### Key Design Decisions
+
+1. **Zone-based grid architecture** — 10 independent zones in a 12-column CSS grid, each lazy-loaded and wrapped in `<ErrorBoundary>`.
+
+2. **Configuration-driven layout** — All zone visibility, column spans, branding, and features are controlled by `DashboardConfig`, enabling reuse across different operational systems without code changes.
+
+3. **DashboardCard as universal wrapper** — Every zone content is wrapped in `<DashboardCard>`, which handles loading/error/empty/data/stale states uniformly.
+
+4. **Primitive composition** — 15 stateless, memoized primitive components (`ExecutiveMetricCard`, `AlertCard`, `StatusCard`, etc.) that layouts compose together.
+
+5. **TanStack Query for data management** — All API calls use `useQuery` with `keepPreviousData` to prevent UI blanking during refetches. Intervals range from 5s (critical operational data) to 15s (executive summary).
+
+---
+
+## Component Inventory
+
+### Layouts (10 zones)
+
+| Zone | File | Data Source | Description |
+|---|---|---|---|
+| Executive Summary | `ExecutiveLayout.tsx` | `/dashboard/executive` | 6 KPI cards in responsive grid |
+| Operations & Compute | `OperationsLayout.tsx` | `/dashboard/operations` | API health cards + active operations list |
+| Integrations & Alerts | `IntegrationLayout.tsx` | `/dashboard/alerts` | Integration tile grid + live alert feed |
+| Decision Intelligence | `DecisionIntelligenceLayout.tsx` | `/dashboard/operations` | Capability status + recent decisions |
+| Observability & Telemetry | `ObservabilityLayout.tsx` | `/dashboard/telemetry` | Area chart with summary metrics |
+| Active Workflows | `WorkflowLayout.tsx` | `/dashboard/operations` | Compact workflow table (8 visible, View All) |
+| Operator Console | `OperatorConsoleLayout.tsx` | `/dashboard/alerts` | Agent cards + activity timeline feed |
+| Runtime Health | `RuntimeHealthLayout.tsx` | `/system/status` | Health bar + component status table (6 visible, View All) |
+| Simulation & Replay | `ReplayLayout.tsx` | `/dashboard/runtime` | Simulation session table (6 visible, View All) |
+| Evidence & Intelligence | `EvidenceLayout.tsx` | `/dashboard/operations` | Evidence cards with confidence metrics |
+
+### Primitives (15 components)
+
+| Primitive | Props Interface | Purpose |
+|---|---|---|
+| `ExecutiveMetricCard` | `ExecutiveMetricCardProps` | KPI display with trend and unit |
+| `AlertCard` | `AlertCardProps` | Severity-coded alert with source |
+| `StatusCard` | `StatusCardProps` | Progress bar with priority indicator |
+| `DecisionCard` | `DecisionCardProps` | Decision action with status badge |
+| `CapabilityCard` | `CapabilityCardProps` | Capability with engaged indicator |
+| `OperatorCard` | `OperatorCardProps` | Agent profile with status dot |
+| `TelemetryCard` | `TelemetryCardProps` | Area chart with summary metrics |
+| `IntegrationCard` | `IntegrationCardProps` | Integration tile with connection status |
+| `TimelineCard` | `TimelineCardProps` | Timeline event with connector line |
+| `APIHealthCard` | `APIHealthCardProps` | Endpoint health with uptime/latency |
+| `EvidenceCard` | `EvidenceCardProps` | Evidence item with confidence score |
+| `RuntimeCard` | `RuntimeCardProps` | Runtime component status |
+| `ReplayCard` | `ReplayCardProps` | Replay session with progress |
+| `WorkflowCard` | `WorkflowCardProps` | Workflow step pipeline |
+| `HealthIndicator` | `HealthIndicatorProps` | Simple health dot indicator |
+
+---
+
+## API Integration
+
+| Endpoint | Method | Hook | Interval | Response Type |
+|---|---|---|---|---|
+| `/health` | GET | `useHealth` | 10s | `HealthResponse` |
+| `/system/status` | GET | `useSystemStatus` | 5s | `SystemStatusResponse` |
+| `/metrics` | GET | `useMetrics` | 10s | `MetricsResponse` |
+| `/dashboard/executive` | GET | `useExecutiveDashboard` | 15s | `ExecutiveDashboardResponse` |
+| `/dashboard/operations` | GET | `useOperationsDashboard` | 5s | `OperationsDashboardResponse` |
+| `/dashboard/alerts` | GET | `useAlertsDashboard` | 5s | `AlertsDashboardResponse` |
+| `/dashboard/runtime` | GET | `useRuntimeDashboard` | 5s | `RuntimeDashboardResponse` |
+| `/dashboard/telemetry` | GET | `useTelemetryDashboard` | 10s | `TelemetryDashboardResponse` |
+
+---
+
+## Error Handling Strategy
+
+| Layer | Mechanism | Recovery |
+|---|---|---|
+| Network | `useNetworkState` hook | Offline banner + cached data |
+| HTTP 404 | Axios response interceptor | Logged + Promise rejection |
+| HTTP 503 | Axios response interceptor | Logged + Promise rejection |
+| Timeout | Axios 20s timeout | Logged + error state in card |
+| Render crash | `<ErrorBoundary>` per zone | "Reload Zone" button |
+| Empty data | `<DashboardCard>` empty state | Informational message |
+
+---
+
+## Typography System
+
+| Element | Size | Weight | Color |
+|---|---|---|---|
+| Dashboard title | 21px | Bold | `text-slate-100` |
+| Dashboard subtitle | 13px | Normal | `text-slate-400` |
+| Card titles | 13.5px | Semibold | `text-slate-200` |
+| Section headers | 14px | Semibold | `text-slate-300` |
+| KPI values | 30px | Extrabold | `text-slate-100` |
+| KPI labels | 12.5px | Semibold | `text-slate-400` |
+| Table headers | 12px | Semibold | `text-slate-400` |
+| Table body | 13px | Regular | `text-slate-200` |
+| Secondary text | 11px | Regular | `text-slate-500` |
+| Chart axis labels | 11px | Regular | `#64748b` |
+| Chart legends | 12px | Medium | `text-slate-400` |
+| Chart tooltips | 12.5px | Regular | Mixed |
