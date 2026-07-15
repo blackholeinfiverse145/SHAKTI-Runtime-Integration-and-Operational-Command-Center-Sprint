@@ -11,7 +11,7 @@ function toScore(components: ComponentStatus[]): number {
 }
 
 export default memo(function RuntimeHealthLayout() {
-  const { data, isLoading: statusLoading, isError: statusError, refetch: statusRefetch } = useSystemStatus();
+  const { data, isLoading: statusLoading, isError: statusError, refetch: statusRefetch, isFetching: statusFetching, isStale: statusStale } = useSystemStatus();
   const metrics = useMetrics();
   const [showAll, setShowAll] = useState(false);
   const score = data ? toScore(data.components) : 0;
@@ -21,6 +21,11 @@ export default memo(function RuntimeHealthLayout() {
 
   const isLoading = statusLoading || metrics.isLoading;
   const isError = !isLoading && (statusError || metrics.isError);
+
+  const timestamp = data?.timestamp || metrics.data?.timestamp;
+  const isFetching = statusFetching || metrics.isFetching;
+  const isStale = statusStale || metrics.isStale;
+  const traceId = (data as any)?.trace_id || (metrics.data as any)?.trace_id;
 
   // Derive telemetry bar values from real /metrics data
   const m = metrics.data;
@@ -41,6 +46,11 @@ export default memo(function RuntimeHealthLayout() {
       errorMessage="Failed to load system health"
       skeletonCount={4}
       skeletonHeight="h-8"
+      timestamp={timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={traceId}
+      dataSource="Control Plane"
       headerRight={
         data ? (
           <span className={`text-xs font-bold ${statusColor(toStatus(data.overall_status))}`}>

@@ -6,7 +6,7 @@ import { useTelemetryDashboard } from "@/hooks/useQueries";
 import { formatTime } from "@/utils/format";
 
 export default memo(function ObservabilityLayout() {
-  const { data, isLoading, isError, refetch } = useTelemetryDashboard();
+  const { data, isLoading, isError, refetch, isFetching, isStale } = useTelemetryDashboard();
 
   // Map telemetry data points to chart series
   const chartData = useMemo(() => data
@@ -41,6 +41,11 @@ export default memo(function ObservabilityLayout() {
       skeletonHeight="h-48"
       isEmpty={data !== undefined && chartData.length === 0}
       emptyMessage="No Runtime Data Available"
+      timestamp={data?.timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={(data as any)?.trace_id}
+      dataSource="Control Plane"
       headerRight={
         data ? (
           <span className="text-xs text-slate-500">

@@ -9,7 +9,7 @@ interface WorkflowStep {
 }
 
 export default memo(function WorkflowLayout() {
-  const { data, isLoading, isError, refetch } = useOperationsDashboard();
+  const { data, isLoading, isError, refetch, isFetching, isStale } = useOperationsDashboard();
 
   const active = data?.active_operations ?? 0;
 
@@ -38,6 +38,11 @@ export default memo(function WorkflowLayout() {
       errorMessage="Failed to load workflows"
       skeletonCount={3}
       skeletonHeight="h-10"
+      timestamp={data?.timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={(data as any)?.trace_id}
+      dataSource="Control Plane"
       isEmpty={data !== undefined && allOperations.length === 0}
       emptyMessage="No Runtime Data Available"
       headerRight={data ? <span className="text-xs text-slate-500">{active} active</span> : undefined}

@@ -36,6 +36,24 @@ interface DashboardCardProps {
   className?: string;
   /** Content rendered in success state */
   children?: ReactNode;
+
+  // Metadata props
+  timestamp?: string;
+  isFetching?: boolean;
+  isStale?: boolean;
+  traceId?: string;
+  dataSource?: string;
+}
+
+function formatTimeWithSeconds(iso?: string): string {
+  if (!iso) return "";
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  } catch {
+    return iso;
+  }
 }
 
 export function DashboardCard({
@@ -53,7 +71,21 @@ export function DashboardCard({
   skeletonHeight = "h-14",
   className,
   children,
+  timestamp,
+  isFetching = false,
+  isStale = false,
+  traceId,
+  dataSource,
 }: DashboardCardProps) {
+  let runtimeStatus: "LIVE" | "STALE" | "OFFLINE" = "LIVE";
+  if (isError && !hasData) {
+    runtimeStatus = "OFFLINE";
+  } else if (isStale || (isError && hasData)) {
+    runtimeStatus = "STALE";
+  } else if (!hasData) {
+    runtimeStatus = "OFFLINE";
+  }
+
   return (
     <section
       aria-label={ariaLabel ?? title}
@@ -101,13 +133,57 @@ export function DashboardCard({
               </span>
               {onRetry && (
                 <button onClick={onRetry} className="underline hover:text-yellow-400 transition-colors">
-                  Retry
+                   Retry
                 </button>
               )}
             </div>
           )}
           {children}
         </>
+      )}
+
+      {/* Metadata Panel */}
+      {hasData && (
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[9px] text-slate-500 border-t border-slate-700/30 pt-1 mt-auto">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="flex items-center gap-1 shrink-0">
+              <span className={cn(
+                "w-1 h-1 rounded-full shrink-0",
+                runtimeStatus === "LIVE" ? "bg-emerald-400 shadow-[0_0_3px_#34d399]" :
+                runtimeStatus === "STALE" ? "bg-amber-400" : "bg-red-400"
+              )} />
+              <span className="text-slate-400 uppercase font-semibold">{runtimeStatus}</span>
+            </span>
+            {timestamp && (
+              <span className="border-l border-slate-700/60 pl-2 shrink-0">
+                Updated: <span className="font-mono text-slate-400">{formatTimeWithSeconds(timestamp)}</span>
+              </span>
+            )}
+            {traceId && (
+              <span className="border-l border-slate-700/60 pl-2 shrink-0">
+                Trace: <span className="font-mono text-slate-400">{traceId}</span>
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {dataSource && (
+              <span>
+                Source: <span className="text-slate-400 font-medium">{dataSource}</span>
+              </span>
+            )}
+            {isFetching && (
+              <span className="flex items-center gap-0.5 text-indigo-400 shrink-0">
+                <span className="w-1 h-1 rounded-full bg-indigo-400 animate-ping" />
+                Refreshing
+              </span>
+            )}
+            {isStale && (
+              <span className="text-amber-500 font-semibold shrink-0">
+                [STALE]
+              </span>
+            )}
+          </div>
+        </div>
       )}
     </section>
   );

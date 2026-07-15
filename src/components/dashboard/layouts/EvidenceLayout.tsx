@@ -7,7 +7,7 @@ import { useTelemetryDashboard } from "@/hooks/useQueries";
 import { formatTime } from "@/utils/format";
 
 export default memo(function EvidenceLayout() {
-  const { data, isLoading, isError, refetch } = useTelemetryDashboard();
+  const { data, isLoading, isError, refetch, isFetching, isStale } = useTelemetryDashboard();
 
   const records = useMemo(() => data
     ? [
@@ -58,6 +58,11 @@ export default memo(function EvidenceLayout() {
       skeletonHeight="h-10"
       isEmpty={data !== undefined && records.length === 0}
       emptyMessage="No Runtime Data Available"
+      timestamp={data?.timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={(data as any)?.trace_id}
+      dataSource="Control Plane"
       headerRight={data ? <span className="text-xs text-slate-500">{formatTime(data.timestamp)}</span> : undefined}
     >
       {data && records.length > 0 && (

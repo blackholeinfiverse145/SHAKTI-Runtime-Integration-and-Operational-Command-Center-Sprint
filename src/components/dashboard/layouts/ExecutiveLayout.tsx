@@ -38,6 +38,11 @@ export default memo(function ExecutiveLayout() {
   const isLoading = exec.isLoading || metrics.isLoading;
   const isError = !isLoading && (exec.isError || metrics.isError);
 
+  const timestamp = exec.data?.timestamp || metrics.data?.timestamp;
+  const isFetching = exec.isFetching || metrics.isFetching;
+  const isStale = exec.isStale || metrics.isStale;
+  const traceId = (exec.data as any)?.trace_id || (metrics.data as any)?.trace_id;
+
   return (
     <section aria-label="Executive Layout" className="w-full space-y-2">
       <DashboardCard
@@ -50,6 +55,11 @@ export default memo(function ExecutiveLayout() {
         skeletonCount={2}
         skeletonHeight="h-20"
         className="border-0 bg-transparent p-0"
+        timestamp={timestamp}
+        isFetching={isFetching}
+        isStale={isStale}
+        traceId={traceId}
+        dataSource="Control Plane"
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
           {metricCards.length > 0

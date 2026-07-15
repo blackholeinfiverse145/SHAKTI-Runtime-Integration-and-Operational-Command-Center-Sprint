@@ -21,7 +21,7 @@ function toReplayState(status: string): ReplayStatus {
 }
 
 export default memo(function ReplayLayout() {
-  const { data, isLoading, isError, refetch } = useRuntimeDashboard();
+  const { data, isLoading, isError, refetch, isFetching, isStale } = useRuntimeDashboard();
 
   const [showAll, setShowAll] = useState(false);
 
@@ -41,6 +41,11 @@ export default memo(function ReplayLayout() {
       skeletonHeight="h-10"
       isEmpty={data !== undefined && allSessions.length === 0}
       emptyMessage="No Runtime Data Available"
+      timestamp={data?.timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={(data as any)?.trace_id}
+      dataSource="Control Plane"
       headerRight={data ? <span className="text-xs text-slate-500">{(data.active_sessions ?? 0)} active</span> : undefined}
     >
       {data && allSessions.length > 0 && (

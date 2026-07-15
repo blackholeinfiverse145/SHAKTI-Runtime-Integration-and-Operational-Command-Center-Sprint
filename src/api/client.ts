@@ -13,7 +13,17 @@ export const apiClient = axios.create({
 // ─── Response interceptor — normalize errors ──────────────────────────────────
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Extract tracing headers from backend
+    const traceId = response.headers?.["x-trace-id"] || 
+                    response.headers?.["traceparent"] || 
+                    response.headers?.["x-request-id"] ||
+                    response.headers?.["x-amzn-trace-id"];
+    if (traceId && response.data && typeof response.data === "object") {
+      (response.data as any).trace_id = traceId;
+    }
+    return response;
+  },
   (error: AxiosError) => {
     const status = error.response?.status;
     const url = error.config?.url ?? "unknown";

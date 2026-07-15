@@ -25,6 +25,11 @@ export default memo(function IntegrationLayout() {
   const isError = !isLoading && (alerts.isError || status.isError);
   const hasData = alerts.data !== undefined || status.data !== undefined;
 
+  const timestamp = alerts.data?.timestamp || status.data?.timestamp;
+  const isFetching = alerts.isFetching || status.isFetching;
+  const isStale = alerts.isStale || status.isStale;
+  const traceId = (alerts.data as any)?.trace_id || (status.data as any)?.trace_id;
+
   return (
     <DashboardCard
       title="Integrations & Alerts"
@@ -36,6 +41,11 @@ export default memo(function IntegrationLayout() {
       errorMessage="Failed to load alerts"
       skeletonCount={4}
       skeletonHeight="h-14"
+      timestamp={timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={traceId}
+      dataSource="Control Plane"
       headerRight={
         unacked > 0 ? (
           <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-red-500/30">

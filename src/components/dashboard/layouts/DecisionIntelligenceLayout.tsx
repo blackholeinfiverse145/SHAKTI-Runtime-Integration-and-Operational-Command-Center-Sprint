@@ -7,7 +7,7 @@ import { useOperationsDashboard } from "@/hooks/useQueries";
 import { toSeverity } from "@/utils/format";
 
 export default memo(function DecisionIntelligenceLayout() {
-  const { data, isLoading, isError, refetch } = useOperationsDashboard();
+  const { data, isLoading, isError, refetch, isFetching, isStale } = useOperationsDashboard();
 
   // Map real operations directly — no fabricated text
   const decisions = useMemo(() => (data?.operations ?? []).map(op => ({
@@ -34,6 +34,11 @@ export default memo(function DecisionIntelligenceLayout() {
       errorMessage="Failed to load intelligence data"
       skeletonCount={4}
       skeletonHeight="h-20"
+      timestamp={data?.timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={(data as any)?.trace_id}
+      dataSource="Control Plane"
       isEmpty={data !== undefined && decisions.length === 0}
       emptyMessage="No Runtime Data Available"
     >

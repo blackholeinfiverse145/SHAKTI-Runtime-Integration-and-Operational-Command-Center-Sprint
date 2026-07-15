@@ -45,6 +45,11 @@ export default memo(function OperatorConsoleLayout() {
   const isError = !isLoading && (alerts.isError || runtime.isError);
   const hasData = alerts.data !== undefined || runtime.data !== undefined;
 
+  const timestamp = alerts.data?.timestamp || runtime.data?.timestamp;
+  const isFetching = alerts.isFetching || runtime.isFetching;
+  const isStale = alerts.isStale || runtime.isStale;
+  const traceId = (alerts.data as any)?.trace_id || (runtime.data as any)?.trace_id;
+
   return (
     <DashboardCard
       title="Operator Console"
@@ -56,6 +61,11 @@ export default memo(function OperatorConsoleLayout() {
       errorMessage="Failed to load console data"
       skeletonCount={5}
       skeletonHeight="h-10"
+      timestamp={timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={traceId}
+      dataSource="Control Plane"
     >
       {hasData && (
         <div className="flex flex-col gap-2 h-full">

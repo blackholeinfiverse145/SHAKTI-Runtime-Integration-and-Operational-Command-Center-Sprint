@@ -7,7 +7,7 @@ import { useOperationsDashboard } from "@/hooks/useQueries";
 import { formatTime, toSeverity } from "@/utils/format";
 
 export default memo(function OperationsLayout() {
-  const { data, isLoading, isError, refetch, isFetching } = useOperationsDashboard();
+  const { data, isLoading, isError, refetch, isFetching, isStale } = useOperationsDashboard();
 
   return (
     <DashboardCard
@@ -20,6 +20,11 @@ export default memo(function OperationsLayout() {
       errorMessage="Failed to load operations"
       skeletonCount={5}
       skeletonHeight="h-7"
+      timestamp={data?.timestamp}
+      isFetching={isFetching}
+      isStale={isStale}
+      traceId={(data as any)?.trace_id}
+      dataSource="Control Plane"
       headerRight={
         <div className="flex items-center gap-2">
           {data && <span className="text-xs text-slate-500">{formatTime(data.timestamp)}</span>}
