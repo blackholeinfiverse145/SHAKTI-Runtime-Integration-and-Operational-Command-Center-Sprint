@@ -36,7 +36,7 @@ export default memo(function EvidenceLayout() {
       isFetching={isFetching}
       isStale={isStale}
       traceId={activeTrace?.trace_id}
-      dataSource="Control Plane"
+      dataSource="Bucket Service"
       headerRight={data ? <span className="text-xs text-slate-500">{formatTime(data.timestamp)}</span> : undefined}
     >
       {data && telemetryItems.length > 0 && (

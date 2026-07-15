@@ -53,7 +53,7 @@ export default memo(function ReplayLayout() {
       isFetching={isFetching}
       isStale={isStale}
       traceId={(data as any)?.trace_id}
-      dataSource="Control Plane"
+      dataSource="Replay Service"
       headerRight={data ? <span className="text-xs text-slate-500">{(data.active_sessions ?? 0)} active</span> : undefined}
     >
       {data && allSessions.length > 0 && (
