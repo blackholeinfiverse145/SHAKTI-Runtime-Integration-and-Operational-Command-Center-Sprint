@@ -1,4 +1,4 @@
-import { memo, useState, useMemo } from "react";
+import { memo, useState } from "react";
 import { Play, CheckCircle, AlertOctagon } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useRuntimeDashboard } from "@/hooks/useQueries";
@@ -25,26 +25,7 @@ export default memo(function ReplayLayout() {
 
   const [showAll, setShowAll] = useState(false);
 
-  // Ensure there are ~8 simulation rows available
-  const allSessions = useMemo(() => {
-    const list = [...(data?.sessions ?? [])];
-    if (list.length > 0 && list.length < 8) {
-      const ops = ["Restore Replica B", "Load Test Gateway", "Verify Ledger Audit", "Purge CDN Cache", "Benchmark Query Engine", "Encrypt Payload Log"];
-      for (let i = list.length; i < 8; i++) {
-        list.push({
-          session_id: `synthetic-sess-${i}`,
-          current_operation: ops[i % ops.length],
-          progress: Math.floor(Math.random() * 80 + 10),
-          status: Math.random() > 0.85 ? "failed" : "running",
-          events_processed: Math.floor(Math.random() * 25000 + 5000),
-          started_at: new Date(Date.now() - i * 600000).toISOString(),
-          last_activity: new Date().toISOString(),
-        });
-      }
-    }
-    return list;
-  }, [data?.sessions]);
-
+  const allSessions = data?.sessions ?? [];
   const sessions = showAll ? allSessions : allSessions.slice(0, 6);
 
   return (
@@ -58,11 +39,11 @@ export default memo(function ReplayLayout() {
       errorMessage="Failed to load replay sessions"
       skeletonCount={2}
       skeletonHeight="h-10"
-      isEmpty={data?.sessions.length === 0}
-      emptyMessage="No active simulations"
+      isEmpty={data !== undefined && allSessions.length === 0}
+      emptyMessage="No Runtime Data Available"
       headerRight={data ? <span className="text-xs text-slate-500">{(data.active_sessions ?? 0)} active</span> : undefined}
     >
-      {data && (
+      {data && allSessions.length > 0 && (
         <div className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto flex-1 min-h-0 pr-1">
           <table className="w-full text-left border-collapse">

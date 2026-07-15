@@ -64,19 +64,23 @@ export default memo(function ExecutiveLayout() {
                   variant="primary"
                 />
               ))
-            : <p className="text-xs text-slate-500 text-center py-6 col-span-full">No executive metrics available</p>}
+            : <p className="text-xs text-slate-500 text-center py-6 col-span-full">No Runtime Data Available</p>}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {kpiCards.map((k) => (
-            <ExecutiveMetricCard 
-              key={k.id} 
-              title={k.title} 
-              value={k.value} 
-              unit={k.unit} 
-              trend={k.trend} 
-              variant="compact"
-            />
-          ))}
+          {kpiCards.length > 0 ? (
+            kpiCards.map((k) => (
+              <ExecutiveMetricCard 
+                key={k.id} 
+                title={k.title} 
+                value={k.value} 
+                unit={k.unit} 
+                trend={k.trend} 
+                variant="compact"
+              />
+            ))
+          ) : (
+            <p className="text-xs text-slate-500 text-center py-6 col-span-full">No Runtime Data Available</p>
+          )}
         </div>
       </DashboardCard>
     </section>

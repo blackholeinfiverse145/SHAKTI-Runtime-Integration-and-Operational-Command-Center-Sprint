@@ -59,7 +59,7 @@ export default memo(function OperationsLayout() {
             </div>
             <div className="space-y-0.5 overflow-y-auto flex-1 min-h-0 pr-1">
               {data.operations.length === 0
-                ? <p className="text-xs text-slate-500 text-center py-3">No operations running</p>
+                ? <p className="text-xs text-slate-500 text-center py-3">No Runtime Data Available</p>
                 : data.operations.slice(0, 4).map((op) => (
                     <StatusCard 
                       key={op.id}

@@ -39,6 +39,8 @@ export default memo(function ObservabilityLayout() {
       errorMessage="Failed to load telemetry"
       skeletonCount={1}
       skeletonHeight="h-48"
+      isEmpty={data !== undefined && chartData.length === 0}
+      emptyMessage="No Runtime Data Available"
       headerRight={
         data ? (
           <span className="text-xs text-slate-500">
@@ -50,7 +52,7 @@ export default memo(function ObservabilityLayout() {
         ) : undefined
       }
     >
-      {data && (
+      {data && chartData.length > 0 && (
         <div className="flex flex-col flex-1 min-h-0">
           <TelemetryCard 
             data={chartData}

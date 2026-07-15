@@ -56,9 +56,11 @@ export default memo(function EvidenceLayout() {
       errorMessage="Failed to load evidence"
       skeletonCount={4}
       skeletonHeight="h-10"
+      isEmpty={data !== undefined && records.length === 0}
+      emptyMessage="No Runtime Data Available"
       headerRight={data ? <span className="text-xs text-slate-500">{formatTime(data.timestamp)}</span> : undefined}
     >
-      {data && (
+      {data && records.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-xs">
           {records.map((ev) => {
             const Icon = ev.icon;

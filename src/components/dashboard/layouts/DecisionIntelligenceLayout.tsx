@@ -9,16 +9,16 @@ import { toSeverity } from "@/utils/format";
 export default memo(function DecisionIntelligenceLayout() {
   const { data, isLoading, isError, refetch } = useOperationsDashboard();
 
-  // Synthesize decisions and capabilities from operations data to showcase layout
-  const decisions = useMemo(() => data?.operations.slice(0, 1).map(op => ({
+  // Map real operations directly — no fabricated text
+  const decisions = useMemo(() => (data?.operations ?? []).map(op => ({
     id: op.id,
-    action: op.type.includes("Backup") ? "Initiated Failover Sequence" : `Scaled ${op.type} Resources`,
-    actor: "SHAKTI AI Supervisor",
-    reason: `Automated response to priority ${op.priority} event. Current progress at ${op.progress}%.`,
-    status: op.progress === 100 ? "executed" as const : "pending_approval" as const,
+    action: op.description,
+    actor: op.agent,
+    reason: `Priority: ${op.priority}. Progress: ${op.progress}%.`,
+    status: op.status === "completed" ? "executed" as const : "pending_approval" as const,
     severity: toSeverity(op.priority),
     isAutomated: true,
-  })) ?? [], [data?.operations]);
+  })), [data?.operations]);
 
   const loadSheddingActive = useMemo(() => data ? data.system_load > 85 : false, [data?.system_load]);
   const autoScalingActive = useMemo(() => data ? data.active_operations > 5 : false, [data?.active_operations]);
@@ -35,9 +35,9 @@ export default memo(function DecisionIntelligenceLayout() {
       skeletonCount={4}
       skeletonHeight="h-20"
       isEmpty={data !== undefined && decisions.length === 0}
-      emptyMessage="No automated decisions active"
+      emptyMessage="No Runtime Data Available"
     >
-      {data && (
+      {data && decisions.length > 0 && (
         <div className="flex flex-col gap-2.5 h-full">
           <div className="grid grid-cols-2 gap-2">
             <CapabilityCard 
@@ -49,7 +49,7 @@ export default memo(function DecisionIntelligenceLayout() {
             <CapabilityCard 
               name="Load Shedding"
               description="Emergency request dropping"
-              status={loadSheddingActive ? "online" : "online"}
+              status="online"
               isEngaged={loadSheddingActive}
             />
           </div>

@@ -1,4 +1,4 @@
-import { memo, useState, useMemo } from "react";
+import { memo, useState } from "react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useOperationsDashboard } from "@/hooks/useQueries";
 import { toSeverity, severityColor } from "@/utils/format";
@@ -13,7 +13,6 @@ export default memo(function WorkflowLayout() {
 
   const active = data?.active_operations ?? 0;
 
-  // Synthesize some steps based on the raw operation data to showcase WorkflowCard
   const buildSteps = (progress: number, status: string): WorkflowStep[] => {
     return [
       { name: "Init", status: "completed" },
@@ -25,31 +24,8 @@ export default memo(function WorkflowLayout() {
 
   const [showAll, setShowAll] = useState(false);
 
-  // Ensure there are ~10 workflows available
-  const allWorkflows = useMemo(() => {
-    const list = [...(data?.operations ?? [])];
-    if (list.length > 0 && list.length < 10) {
-      const types = ["System Backup", "DB Migration", "Node Failover", "Cache Warming", "Log Rotation", "Security Audit", "API Gateway Sync", "SSL Renewal"];
-      const agents = ["SHAKTI Agent Alpha", "SHAKTI Agent Beta", "SHAKTI Agent Gamma", "SHAKTI Supervisor"];
-      const desc = ["Syncing metadata replicas", "Rebuilding indices", "Checking node status", "Pre-fetching hot keys", "Purging expired access logs", "Scanning container vulnerabilities", "Deploying ingress rules", "Updating let's encrypt keys"];
-
-      for (let i = list.length; i < 10; i++) {
-        list.push({
-          id: `synthetic-op-${i}`,
-          type: types[i % types.length],
-          description: desc[i % desc.length],
-          agent: agents[i % agents.length],
-          progress: Math.floor(Math.random() * 100),
-          status: (Math.random() > 0.8 ? "failed" : Math.random() > 0.4 ? "running" : "completed") as "running" | "completed" | "failed" | "pending",
-          priority: (Math.random() > 0.7 ? "high" : Math.random() > 0.3 ? "medium" : "low") as "high" | "medium" | "low",
-          started_at: new Date().toISOString(),
-        });
-      }
-    }
-    return list;
-  }, [data?.operations]);
-
-  const workflows = showAll ? allWorkflows : allWorkflows.slice(0, 8);
+  const allOperations = data?.operations ?? [];
+  const workflows = showAll ? allOperations : allOperations.slice(0, 8);
 
   return (
     <DashboardCard
@@ -62,11 +38,11 @@ export default memo(function WorkflowLayout() {
       errorMessage="Failed to load workflows"
       skeletonCount={3}
       skeletonHeight="h-10"
-      isEmpty={data?.operations.length === 0}
-      emptyMessage="No active workflows"
+      isEmpty={data !== undefined && allOperations.length === 0}
+      emptyMessage="No Runtime Data Available"
       headerRight={data ? <span className="text-xs text-slate-500">{active} active</span> : undefined}
     >
-      {data && (
+      {data && allOperations.length > 0 && (
         <>
           <div className="overflow-y-auto flex-1 min-h-0 pr-1">
             <table className="w-full text-left border-collapse">
@@ -128,15 +104,15 @@ export default memo(function WorkflowLayout() {
               </tbody>
             </table>
           </div>
-          {allWorkflows.length > 8 && (
+          {allOperations.length > 8 && (
             <div className="flex justify-between items-center pt-1 border-t border-slate-700/40">
               <button
                 onClick={() => setShowAll(!showAll)}
                 className="text-[11px] text-indigo-400 hover:text-indigo-300 underline font-semibold cursor-pointer"
               >
-                {showAll ? "Show Less" : `View All (${allWorkflows.length})`}
+                {showAll ? "Show Less" : `View All (${allOperations.length})`}
               </button>
-              <span className="text-[10px] text-slate-500 font-mono">{allWorkflows.length} workflows</span>
+              <span className="text-[10px] text-slate-500 font-mono">{allOperations.length} workflows</span>
             </div>
           )}
         </>
