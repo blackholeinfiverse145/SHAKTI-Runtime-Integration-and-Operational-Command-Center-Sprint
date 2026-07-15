@@ -150,4 +150,31 @@ export interface TelemetryDashboardResponse {
     error_rate: number;
     uptime_percentage: number;
   };
+  recent_telemetry?: {
+    trace_id: string;
+    telemetry: {
+      source_id: string;
+      metric: string;
+      value: number;
+      unit: string;
+      timestamp: string;
+      trace_id: string;
+      source_module_id: string;
+      status: string;
+    } | null;
+    signal: {
+      signal_id: string;
+      trace_id: string;
+      metric: string;
+      value: number;
+      unit: string;
+      classification: string;
+      threshold_breached: boolean;
+      derived_at: string;
+      source_module_id: string;
+      status: string;
+      prompt: string;
+    } | null;
+  }[];
+  classification_breakdown?: Record<string, number>;
 }
