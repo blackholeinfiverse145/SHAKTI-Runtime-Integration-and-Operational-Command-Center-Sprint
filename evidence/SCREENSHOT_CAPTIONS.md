@@ -79,5 +79,11 @@ This document lists the official captions for the screenshots demonstrating comp
 ### `24_dark_theme.png`
 * **Caption:** Displays the dashboard rendering in its default high-contrast dark color palette. This documents the dark theme design that meets standard operations command room requirements.
 
+### `25_light_theme.png`
+* **Caption:** Documents that light theme support is not currently implemented in the command center. Only dark mode is active to minimize eye strain in low-light NOC environments.
+
 ### `26_typography_hierarchy.png`
 * **Caption:** Highlights the unified 7-level type hierarchy applied across all dashboard views. This confirms the typography pass has been successfully executed, standardizing font sizes from the 21px title down to 11px metadata.
+
+### `27_lighthouse_report.png`
+* **Caption:** Displays the Lighthouse audit report score breakdown. This shows a high level of compliance for Best Practices, SEO optimization, and accessibility.

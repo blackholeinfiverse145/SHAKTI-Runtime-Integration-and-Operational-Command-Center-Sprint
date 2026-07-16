@@ -81,6 +81,7 @@ Refer to [`Evidence_Guide.md`](file:///c:/Pratik_Bhuwad/shakti-command-center/re
 - [x] **`12_evidence_intelligence.png`**: Verifies blueprint view columns.
 - [x] **`17_loading_state.png`** / **`18_empty_state.png`**: Verifies skeleton and empty fallbacks.
 - [x] **`19_error_recovery.png`** / **`20_offline_banner.png`**: Verifies error banners and cached-data warning layouts.
+- [x] **`27_lighthouse_report.png`**: Verifies Lighthouse audit compliance ratings.
 
 ---
 

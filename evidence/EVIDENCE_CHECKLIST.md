@@ -316,6 +316,18 @@
 
 ---
 
+## 27. Lighthouse Audit Report
+
+| Field | Value |
+|---|---|
+| **Filename** | `27_lighthouse_report.png` |
+| **Navigate to** | `http://localhost:5173` |
+| **How to trigger** | Run Lighthouse audit in Chrome DevTools. Capture the final audit score dials. |
+| **Caption** | Lighthouse audit report — scores showing accessibility, SEO, and best practices parameters. |
+| **Mandatory** | ✅ Yes |
+
+---
+
 ## Summary Table
 
 | # | Filename | Category | Mandatory |
@@ -346,5 +358,6 @@
 | 24 | `24_dark_theme.png` | Dark Theme | ✅ |
 | 25 | `25_light_theme.png` | Light Theme | ⚠️ Not implemented |
 | 26 | `26_typography_hierarchy.png` | Typography | ✅ |
+| 27 | `27_lighthouse_report.png` | Lighthouse Audit | ✅ |
 
-**Total: 26 items (23 mandatory, 2 conditional, 1 not applicable)**
+**Total: 27 items (24 mandatory, 2 conditional, 1 not applicable)**

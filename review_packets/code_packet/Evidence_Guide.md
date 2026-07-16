@@ -81,3 +81,9 @@ This document maps the screenshots stored in the repository's `evidence/` direct
 *   **Purpose**: Verify network connection lost banner alerts.
 *   **Caption**: "Offline Cached Data Warning Banner"
 *   **What it proves**: Proves that connection loss triggers yellow cached warning banners without blanking out layout panels.
+
+### 14. Lighthouse Audit Report
+*   **Filename**: `27_lighthouse_report.png`
+*   **Purpose**: Verify page performance, accessibility, Best Practices, and SEO optimization.
+*   **Caption**: "Lighthouse Performance & SEO Audit Report"
+*   **What it proves**: Proves high scores and design compliance with Lighthouse standards.
