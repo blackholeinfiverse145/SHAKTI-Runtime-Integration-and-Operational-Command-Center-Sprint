@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { useSystemStatus, useMetrics } from "@/hooks/useQueries";
 import { toStatus, statusColor, statusDot, formatTime } from "@/utils/format";
@@ -13,11 +13,9 @@ function toScore(components: ComponentStatus[]): number {
 export default memo(function RuntimeHealthLayout() {
   const { data, isLoading: statusLoading, isError: statusError, refetch: statusRefetch, isFetching: statusFetching, isStale: statusStale } = useSystemStatus();
   const metrics = useMetrics();
-  const [showAll, setShowAll] = useState(false);
   const score = data ? toScore(data.components) : 0;
 
   const components = data?.components ?? [];
-  const visibleComponents = showAll ? components : components.slice(0, 6);
 
   const isLoading = statusLoading || metrics.isLoading;
   const isError = !isLoading && (statusError || metrics.isError);
@@ -60,9 +58,9 @@ export default memo(function RuntimeHealthLayout() {
       }
     >
       {data && (
-        <div className="flex flex-col gap-2 h-full">
+        <div className="flex flex-col gap-2 h-full min-h-0">
           {/* Progress bar + Score */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 shrink-0">
             <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all"
@@ -73,7 +71,7 @@ export default memo(function RuntimeHealthLayout() {
           </div>
 
           {/* Compact Telemetry bar — real values from /metrics */}
-          <div className="grid grid-cols-4 gap-1 bg-slate-900/40 p-1 rounded border border-slate-800 text-center">
+          <div className="grid grid-cols-4 gap-1 bg-slate-900/40 p-1 rounded border border-slate-800 text-center shrink-0">
             <div>
               <div className="text-[9px] text-slate-500 uppercase tracking-wider">Success</div>
               <div className="text-[11px] font-bold text-emerald-400">{uptimeDisplay}</div>
@@ -94,11 +92,11 @@ export default memo(function RuntimeHealthLayout() {
 
           {/* Component status table */}
           {components.length === 0 ? (
-            <p className="text-xs text-slate-500 text-center py-4">No Runtime Data Available</p>
+            <p className="text-xs text-slate-500 text-center py-4 flex-1">No Runtime Data Available</p>
           ) : (
-            <div className="overflow-y-auto flex-1 min-h-0 pr-1">
+            <div className="overflow-y-auto flex-1 min-h-0 max-h-[200px] pr-1">
               <table className="w-full text-left border-collapse">
-                <thead>
+                <thead className="sticky top-0 bg-slate-800 z-10">
                   <tr className="border-b border-slate-700/60 text-[12px] font-semibold text-slate-400">
                     <th className="py-1">Component</th>
                     <th className="py-1 text-right">Response</th>
@@ -107,7 +105,7 @@ export default memo(function RuntimeHealthLayout() {
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleComponents.map((c) => {
+                  {components.map((c) => {
                     const compStatus = toStatus(c.status);
                     return (
                       <tr key={c.name} className="border-b border-slate-850 last:border-0 hover:bg-slate-800/20 text-[13px] text-slate-200">
@@ -132,17 +130,7 @@ export default memo(function RuntimeHealthLayout() {
             </div>
           )}
 
-          <div className="flex justify-between items-center text-[10px] text-slate-500">
-            {components.length > 6 ? (
-              <button 
-                onClick={() => setShowAll(!showAll)} 
-                className="text-[11px] text-indigo-400 hover:text-indigo-300 underline font-semibold leading-none cursor-pointer"
-              >
-                {showAll ? "Show Less" : `View All (${components.length})`}
-              </button>
-            ) : (
-              <span />
-            )}
+          <div className="flex justify-end items-center text-[10px] text-slate-500 shrink-0 pt-1 border-t border-slate-700/30">
             <span>Checked {formatTime(data.timestamp)}</span>
           </div>
         </div>

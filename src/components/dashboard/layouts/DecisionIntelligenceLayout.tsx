@@ -10,15 +10,24 @@ export default memo(function DecisionIntelligenceLayout() {
   const { data, isLoading, isError, refetch, isFetching, isStale } = useOperationsDashboard();
 
   // Map real operations directly — no fabricated text
-  const decisions = useMemo(() => (data?.operations ?? []).map(op => ({
-    id: op.id,
-    action: op.description,
-    actor: op.agent,
-    reason: `Priority: ${op.priority}. Progress: ${op.progress}%.`,
-    status: op.status === "completed" ? "executed" as const : "pending_approval" as const,
-    severity: toSeverity(op.priority),
-    isAutomated: true,
-  })), [data?.operations]);
+  const decisions = useMemo(() => {
+    const rawOps = data?.operations ?? [];
+    const sortedOps = [...rawOps].sort((a, b) => {
+      const timeA = a.started_at ? new Date(a.started_at).getTime() : 0;
+      const timeB = b.started_at ? new Date(b.started_at).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    return sortedOps.map(op => ({
+      id: op.id,
+      action: op.description,
+      actor: op.agent,
+      reason: `Priority: ${op.priority}. Progress: ${op.progress}%.`,
+      status: op.status === "completed" ? "executed" as const : "pending_approval" as const,
+      severity: toSeverity(op.priority),
+      isAutomated: true,
+    }));
+  }, [data?.operations]);
 
   const loadSheddingActive = useMemo(() => data ? data.system_load > 85 : false, [data?.system_load]);
   const autoScalingActive = useMemo(() => data ? data.active_operations > 5 : false, [data?.active_operations]);
@@ -43,15 +52,15 @@ export default memo(function DecisionIntelligenceLayout() {
       emptyMessage="No Runtime Data Available"
     >
       {data && decisions.length > 0 && (
-        <div className="flex flex-col gap-2.5 h-full">
+        <div className="flex flex-col gap-2.5 h-full min-h-0">
           <div className="grid grid-cols-2 gap-2">
-            <CapabilityCard 
+            <CapabilityCard
               name="Predictive Scaling"
               description="AI-driven resource scaling"
               status="online"
               isEngaged={autoScalingActive}
             />
-            <CapabilityCard 
+            <CapabilityCard
               name="Load Shedding"
               description="Emergency request dropping"
               status="online"
@@ -61,9 +70,9 @@ export default memo(function DecisionIntelligenceLayout() {
 
           <div className="flex-1 flex flex-col min-h-0">
             <h3 className="text-sm font-semibold text-slate-300 mb-1.5 border-b border-slate-700/60 pb-0.5">Recent Decisions</h3>
-            <div className="space-y-1 overflow-y-auto flex-1 min-h-0">
+            <div className="space-y-1 overflow-y-auto flex-1 min-h-0 max-h-[250px]">
               {decisions.map(d => (
-                <DecisionCard 
+                <DecisionCard
                   key={d.id}
                   action={d.action}
                   actor={d.actor}

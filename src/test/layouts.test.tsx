@@ -34,12 +34,22 @@ describe("Layout Components Integration", () => {
       mockUseExecutiveDashboard.mockReturnValue({
         data: {
           timestamp: "2026-07-15T16:53:18.000Z",
-          kpis: {
-            revenue_run_rate_usd: 1250000,
-            active_contracts_count: 45,
-            sla_compliance_rate: 99.85,
-            system_utilization_rate: 85.4,
-          },
+          summary: [
+            { metric: "active_contracts_count", value: "77", trend: "up", status: "operational" },
+          ],
+        },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      });
+
+      mockUseMetrics.mockReturnValue({
+        data: {
+          timestamp: "2026-07-15T16:53:18.000Z",
+          total_requests: 1500,
+          success_rate: 99.98,
+          average_response_time_ms: 45.2,
+          events_processed: 50000,
         },
         isLoading: false,
         isError: false,
@@ -48,11 +58,10 @@ describe("Layout Components Integration", () => {
 
       render(<ExecutiveLayout />);
 
-      expect(screen.getByText("Executive Business KPIs")).toBeInTheDocument();
-      expect(screen.getByText("$1,250,000")).toBeInTheDocument();
-      expect(screen.getByText("45")).toBeInTheDocument();
-      expect(screen.getByText("99.85%")).toBeInTheDocument();
-      expect(screen.getByText("85.40%")).toBeInTheDocument();
+      expect(screen.getByText("Executive Summary")).toBeInTheDocument();
+      expect(screen.getByText("active contracts count")).toBeInTheDocument();
+      expect(screen.getByText("77")).toBeInTheDocument();
+      expect(screen.getByText("100.0")).toBeInTheDocument();
     });
 
     test("renders empty fallback on empty/no KPI dataset", () => {
@@ -63,8 +72,15 @@ describe("Layout Components Integration", () => {
         refetch: vi.fn(),
       });
 
+      mockUseMetrics.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      });
+
       render(<ExecutiveLayout />);
-      expect(screen.getByText("No Runtime Data Available")).toBeInTheDocument();
+      expect(screen.getAllByText("No Runtime Data Available")[0]).toBeInTheDocument();
     });
   });
 
@@ -74,8 +90,8 @@ describe("Layout Components Integration", () => {
         data: {
           timestamp: "2026-07-15T16:53:18.000Z",
           components: [
-            { component_id: "gate_service", status: "healthy", version: "1.0.0", uptime_seconds: 5000 },
-            { component_id: "bhiv_bucket", status: "healthy", version: "1.2.0", uptime_seconds: 12000 },
+            { name: "gate_service", status: "operational", response_time_ms: 45, details: "healthy" },
+            { name: "bhiv_bucket", status: "operational", response_time_ms: 120, details: "healthy" },
           ],
         },
         isLoading: false,
@@ -97,11 +113,11 @@ describe("Layout Components Integration", () => {
 
       render(<RuntimeHealthLayout />);
 
-      expect(screen.getByText("Runtime Health & Topology")).toBeInTheDocument();
+      expect(screen.getByText("Runtime Health")).toBeInTheDocument();
       expect(screen.getByText("gate_service")).toBeInTheDocument();
       expect(screen.getByText("bhiv_bucket")).toBeInTheDocument();
       expect(screen.getByText("99.98%")).toBeInTheDocument();
-      expect(screen.getByText("45.2ms")).toBeInTheDocument();
+      expect(screen.getAllByText("45ms")[0]).toBeInTheDocument();
     });
   });
 
@@ -112,7 +128,7 @@ describe("Layout Components Integration", () => {
           timestamp: "2026-07-15T16:53:18.000Z",
           operations: [
             {
-              instruction_id: "op_01",
+              id: "op_01",
               status: "running",
               description: "Blueprint validation running",
               agent: "creator",
@@ -127,10 +143,10 @@ describe("Layout Components Integration", () => {
 
       render(<WorkflowLayout />);
 
-      expect(screen.getByText("Execution Pipelines & Linage")).toBeInTheDocument();
+      expect(screen.getByText("Active Workflows")).toBeInTheDocument();
       expect(screen.getByText("Blueprint validation running")).toBeInTheDocument();
       expect(screen.getByText("creator")).toBeInTheDocument();
-      expect(screen.getByText("op_01")).toBeInTheDocument();
+      expect(screen.getByText("#op_01")).toBeInTheDocument();
     });
 
     test("renders empty row fallback when no workflows are returned", () => {

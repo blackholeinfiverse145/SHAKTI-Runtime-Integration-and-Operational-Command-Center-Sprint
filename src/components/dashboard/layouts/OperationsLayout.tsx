@@ -37,35 +37,33 @@ export default memo(function OperationsLayout() {
       {data && (
         <div className="flex flex-col gap-4 h-full">
           <div className="grid grid-cols-2 gap-2">
-            <RuntimeCard 
-              id="node-primary" 
-              status="active" 
-              cpuUsage={data.system_load} 
-              memoryUsage={data.system_load * 0.8} 
-              connections={data.active_operations * 14} 
+            <RuntimeCard
+              id="node-primary"
+              status="active"
+              cpuUsage={data.system_load}
+              memoryUsage={data.system_load * 0.8}
+              connections={data.active_operations * 14}
             />
-            <RuntimeCard 
-              id="node-replica" 
-              status={data.system_load > 80 ? "active" : "standby"} 
-              cpuUsage={data.system_load > 80 ? 40 : 5} 
-              memoryUsage={12} 
-              connections={data.queue_depth} 
+            <RuntimeCard
+              id="node-replica"
+              status={data.system_load > 80 ? "active" : "standby"}
+              cpuUsage={data.system_load > 80 ? 40 : 5}
+              memoryUsage={12}
+              connections={data.queue_depth}
             />
           </div>
 
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between border-b border-slate-700/60 mb-1.5 pb-0.5">
               <h3 className="text-sm font-semibold text-slate-300">Active Operations</h3>
-              {data.operations.length > 4 && (
-                <span className="text-[10px] text-indigo-400 font-mono font-bold">
-                  +{data.operations.length - 4} more
-                </span>
-              )}
+              <span className="text-[10px] text-slate-500 font-mono font-semibold">
+                {data.operations.length} total
+              </span>
             </div>
-            <div className="space-y-0.5 overflow-y-auto flex-1 min-h-0 pr-1">
+            <div className="space-y-0.5 overflow-y-auto flex-1 min-h-0 max-h-[200px] pr-1">
               {data.operations.length === 0
                 ? <p className="text-xs text-slate-500 text-center py-3">No Runtime Data Available</p>
-                : data.operations.slice(0, 4).map((op) => (
+                : data.operations.map((op) => (
                     <StatusCard 
                       key={op.id}
                       label={op.type}

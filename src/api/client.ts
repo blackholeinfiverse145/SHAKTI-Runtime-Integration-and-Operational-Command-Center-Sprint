@@ -6,7 +6,7 @@ const BASE_URL =
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 20000,
+  timeout: 250000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -15,10 +15,10 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => {
     // Extract tracing headers from backend
-    const traceId = response.headers?.["x-trace-id"] || 
-                    response.headers?.["traceparent"] || 
-                    response.headers?.["x-request-id"] ||
-                    response.headers?.["x-amzn-trace-id"];
+    const traceId = response.headers?.["x-trace-id"] ||
+      response.headers?.["traceparent"] ||
+      response.headers?.["x-request-id"] ||
+      response.headers?.["x-amzn-trace-id"];
     if (traceId && response.data && typeof response.data === "object") {
       (response.data as any).trace_id = traceId;
     }

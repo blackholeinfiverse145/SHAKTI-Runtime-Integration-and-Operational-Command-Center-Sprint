@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 export interface TelemetrySeries {
   name: string;
@@ -22,30 +22,41 @@ export interface TelemetryCardProps {
   series: TelemetrySeries[];
   /** Array of summary metrics to display above the chart */
   summaryMetrics?: TelemetrySummaryMetric[];
-  /** Height of the chart component in pixels */
-  chartHeight?: number;
+  /** Height of the chart component in pixels or percentage string */
+  chartHeight?: number | string;
+  /** Optional overall query tracing ID to display inside the tooltip */
+  traceId?: string;
 }
 
 const CustomTooltip = ({
   active,
   payload,
   label,
+  traceId,
 }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-slate-900/95 backdrop-blur border border-slate-700 shadow-xl rounded-md p-2 text-[12.5px] space-y-1.5 z-50">
-      <p className="text-slate-400 font-medium pb-1 border-b border-slate-800/50">{label}</p>
-      {payload.map((p: any) => (
-        <div key={p.name} className="flex items-center gap-2 justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-            <span className="text-slate-350">{p.name}</span>
+    <div className="bg-slate-900/95 backdrop-blur border border-slate-700 shadow-xl rounded-md p-2.5 text-[12.5px] space-y-1.5 z-50 min-w-[160px]">
+      <p className="text-slate-400 font-semibold pb-1 border-b border-slate-800/80">{label}</p>
+      <div className="space-y-1">
+        {payload.map((p: any) => (
+          <div key={p.name} className="flex items-center gap-2 justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
+              <span className="text-slate-400">{p.name}</span>
+            </div>
+            <span className="font-bold text-slate-100" style={{ color: p.color }}>
+              {typeof p.value === 'number' ? p.value.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : p.value}
+            </span>
           </div>
-          <span className="font-semibold text-slate-100" style={{ color: p.color }}>
-            {typeof p.value === 'number' ? p.value.toFixed(1) : p.value}
-          </span>
+        ))}
+      </div>
+      {traceId && (
+        <div className="border-t border-slate-800/80 pt-1.5 flex flex-col gap-0.5">
+          <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Trace ID</span>
+          <span className="text-[10.5px] font-mono text-slate-400 break-all">{traceId}</span>
         </div>
-      ))}
+      )}
     </div>
   );
 };
@@ -55,14 +66,15 @@ export const TelemetryCard = memo(function TelemetryCard({
   xAxisKey = "time",
   series,
   summaryMetrics,
-  chartHeight = 130,
+  chartHeight = "100%",
+  traceId,
 }: TelemetryCardProps) {
   const hasData = data && data.length > 0;
 
   return (
-    <div className="flex flex-col gap-3 w-full">
+    <div className="flex flex-col flex-1 min-h-0 gap-3 w-full">
       {summaryMetrics && summaryMetrics.length > 0 && (
-        <div className={`grid gap-2 grid-cols-${Math.min(summaryMetrics.length, 4)}`}>
+        <div className={`grid gap-2 grid-cols-${Math.min(summaryMetrics.length, 4)} shrink-0`}>
           {summaryMetrics.map((sm, i) => (
             <div key={i} className="bg-slate-700/30 border border-slate-600/30 rounded p-2">
               <p className="text-[12px] text-slate-400 font-semibold uppercase tracking-wider">{sm.label}</p>
@@ -76,59 +88,62 @@ export const TelemetryCard = memo(function TelemetryCard({
       )}
 
       {hasData ? (
-        <ResponsiveContainer width="100%" height={chartHeight}>
-          <AreaChart data={data} margin={{ top: 5, right: 0, left: -25, bottom: 0 }}>
-            <defs>
-              {series.map((s, i) => (
-                <linearGradient key={s.dataKey} id={`gradient-${i}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={s.color} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={s.color} stopOpacity={0} />
-                </linearGradient>
-              ))}
-            </defs>
-            <XAxis 
-              dataKey={xAxisKey} 
-              tick={{ fontSize: 11, fill: "#64748b" }} 
-              tickLine={false} 
-              axisLine={false} 
-              interval="preserveEnd"
-              minTickGap={20}
-            />
-            <YAxis 
-              tick={{ fontSize: 11, fill: "#64748b" }} 
-              tickLine={false} 
-              axisLine={false} 
-            />
-            <Tooltip content={<CustomTooltip />} />
-            {series.map((s, i) => (
-              <Area 
-                key={s.dataKey}
-                type="monotone" 
-                dataKey={s.dataKey} 
-                name={s.name}
-                stroke={s.color} 
-                strokeWidth={1.5} 
-                fill={`url(#gradient-${i})`} 
-                dot={false}
-                activeDot={{ r: 3, strokeWidth: 0 }}
+        <div className="relative flex-1 min-h-0 w-full">
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 5 }}>
+              <defs>
+                {series.map((s, i) => (
+                  <linearGradient key={s.dataKey} id={`gradient-${i}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={s.color} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={s.color} stopOpacity={0.01} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.25} vertical={false} />
+              <XAxis 
+                dataKey={xAxisKey} 
+                tick={{ fontSize: 11, fill: "#64748b" }} 
+                tickLine={false} 
+                axisLine={false} 
+                interval="preserveEnd"
+                minTickGap={20}
               />
+              <YAxis 
+                tick={{ fontSize: 11, fill: "#64748b" }} 
+                tickLine={false} 
+                axisLine={false} 
+              />
+              <Tooltip content={<CustomTooltip traceId={traceId} />} />
+              {series.map((s, i) => (
+                <Area 
+                  key={s.dataKey}
+                  type="monotone" 
+                  dataKey={s.dataKey} 
+                  name={s.name}
+                  stroke={s.color} 
+                  strokeWidth={1.5} 
+                  fill={`url(#gradient-${i})`} 
+                  dot={false}
+                  activeDot={{ r: 4, strokeWidth: 0 }}
+                />
+              ))}
+            </AreaChart>
+          </ResponsiveContainer>
+          {/* Legend inside the chart (bottom-right) */}
+          <div className="absolute bottom-2 right-2 bg-slate-900/90 border border-slate-700/50 rounded px-2 py-1 flex items-center gap-3 text-[10px] text-slate-300 font-semibold pointer-events-none shadow-md">
+            {series.map(s => (
+              <span key={s.dataKey} className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }} />
+                {s.name}
+              </span>
             ))}
-          </AreaChart>
-        </ResponsiveContainer>
+          </div>
+        </div>
       ) : (
-        <div className="flex items-center justify-center w-full" style={{ height: chartHeight }}>
+        <div className="flex-1 flex items-center justify-center w-full min-h-[120px]">
           <p className="text-xs text-slate-500">No telemetry data available</p>
         </div>
       )}
-
-      <div className="flex gap-4 justify-end flex-wrap mt-1">
-        {series.map(s => (
-          <span key={s.dataKey} className="flex items-center gap-1.5 text-[12px] text-slate-400 font-medium">
-            <span className="w-2.5 h-0.5 rounded-full" style={{ backgroundColor: s.color }} />
-            {s.name}
-          </span>
-        ))}
-      </div>
     </div>
   );
 });

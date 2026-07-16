@@ -44,7 +44,7 @@ export default memo(function EvidenceLayout() {
           {/* Column 1: Bucket Evidence (recent telemetry) */}
           <div className="lg:col-span-6 flex flex-col min-h-0 border-r border-slate-700/30 pr-2">
             <h3 className="text-xs font-semibold text-slate-400 mb-1">Bucket Evidence</h3>
-            <div className="space-y-1 overflow-y-auto flex-1 pr-1">
+            <div className="space-y-1 overflow-y-auto flex-1 max-h-[300px] pr-1">
               {telemetryItems.map((item) => {
                 const isSelected = activeTrace?.trace_id === item.trace_id;
                 const classification = item.signal?.classification || "nominal";
@@ -53,8 +53,8 @@ export default memo(function EvidenceLayout() {
                 const icon = classification === "critical" ? Zap : classification === "warning" ? Clock : Activity;
 
                 return (
-                  <div 
-                    key={item.trace_id} 
+                  <div
+                    key={item.trace_id}
                     onClick={() => {
                       setSelectedTraceId(item.trace_id);
                       setSelectedArtifact("instruction");
@@ -81,7 +81,7 @@ export default memo(function EvidenceLayout() {
             {activeTrace ? (
               <div className="flex flex-col h-full min-h-0">
                 <h3 className="text-xs font-semibold text-slate-400 mb-1">Execution Chain</h3>
-                
+
                 {/* Chain Steps horizontal navigation */}
                 <div className="flex items-center gap-1.5 p-1 bg-slate-900/40 rounded border border-slate-800/80 mb-2">
                   {[
@@ -105,11 +105,11 @@ export default memo(function EvidenceLayout() {
                 </div>
 
                 {/* Artifact Details Viewer */}
-                <div className="flex-1 overflow-y-auto bg-slate-900/20 rounded border border-slate-800/50 p-2 text-[11px]">
+                <div className="flex-1 overflow-y-auto bg-slate-900/20 rounded border border-slate-800/50 p-2 text-[11px] max-h-[250px]">
                   <h4 className="font-semibold text-slate-350 border-b border-slate-800 pb-1 mb-1.5 uppercase tracking-wider text-[9px]">
                     Artifact Viewer - {selectedArtifact}
                   </h4>
-                  
+
                   {selectedArtifact === "instruction" && activeTrace.telemetry && (
                     <div className="space-y-1.5">
                       <div className="flex justify-between"><span className="text-slate-500">Source:</span> <span className="text-slate-300 font-mono">{activeTrace.telemetry.source_id}</span></div>

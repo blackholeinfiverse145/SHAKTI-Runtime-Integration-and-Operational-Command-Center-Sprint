@@ -8,10 +8,10 @@ import { formatRelativeTime } from "@/utils/format";
 type ReplayStatus = "running" | "completed" | "failed" | "idle";
 
 const STATE_CONFIG: Record<ReplayStatus, { icon: React.ElementType; color: string; bar: string }> = {
-  running:   { icon: Play,         color: "text-blue-400 animate-pulse", bar: "bg-blue-500" },
-  completed: { icon: CheckCircle,  color: "text-emerald-400",             bar: "bg-emerald-500" },
-  failed:    { icon: AlertOctagon, color: "text-red-400 animate-bounce",  bar: "bg-red-500" },
-  idle:      { icon: Play,         color: "text-slate-500",               bar: "bg-slate-700" },
+  running: { icon: Play, color: "text-blue-400 animate-pulse", bar: "bg-blue-500" },
+  completed: { icon: CheckCircle, color: "text-emerald-400", bar: "bg-emerald-500" },
+  failed: { icon: AlertOctagon, color: "text-red-400 animate-bounce", bar: "bg-red-500" },
+  idle: { icon: Play, color: "text-slate-500", bar: "bg-slate-700" },
 };
 
 function toReplayState(status: string): ReplayStatus {
@@ -24,10 +24,8 @@ function toReplayState(status: string): ReplayStatus {
 export default memo(function ReplayLayout() {
   const { data, isLoading, isError, refetch, isFetching, isStale } = useRuntimeDashboard();
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
-  const [showAll, setShowAll] = useState(false);
 
   const allSessions = data?.sessions ?? [];
-  const sessions = showAll ? allSessions : allSessions.slice(0, 6);
 
   const activeSession = useMemo(() => {
     if (selectedSessionId) {
@@ -60,9 +58,9 @@ export default memo(function ReplayLayout() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 h-full min-h-0 flex-1">
           {/* Column 1: Replay Sessions List */}
           <div className="lg:col-span-7 flex flex-col min-h-0 border-r border-slate-700/30 pr-2">
-            <div className="overflow-y-auto flex-1 min-h-0 pr-1">
+            <div className="overflow-y-auto flex-1 min-h-0 max-h-[220px] pr-1">
               <table className="w-full text-left border-collapse">
-                <thead>
+                <thead className="sticky top-0 bg-slate-800 z-10">
                   <tr className="border-b border-slate-700/60 text-[12px] font-semibold text-slate-400">
                     <th className="py-1 pb-1.5">Session</th>
                     <th className="py-1 pb-1.5">Operation</th>
@@ -71,16 +69,16 @@ export default memo(function ReplayLayout() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sessions.map((s) => {
+                  {allSessions.map((s) => {
                     const state = toReplayState(s.status);
                     const cfg = STATE_CONFIG[state] ?? STATE_CONFIG.idle;
                     const Icon = cfg.icon;
                     const clampedProgress = Math.min(100, Math.max(0, s.progress ?? 0));
                     const isSelected = activeSession?.session_id === s.session_id;
-                    
+
                     return (
-                      <tr 
-                        key={s.session_id} 
+                      <tr
+                        key={s.session_id}
                         onClick={() => setSelectedSessionId(s.session_id)}
                         className={`cursor-pointer border-b border-slate-800/30 last:border-0 text-[13px] text-slate-200 transition-colors ${isSelected ? 'bg-slate-700/30' : 'hover:bg-slate-800/20'}`}
                       >
@@ -107,17 +105,6 @@ export default memo(function ReplayLayout() {
                 </tbody>
               </table>
             </div>
-            {allSessions.length > 6 && (
-              <div className="flex justify-between items-center pt-1 border-t border-slate-700/40">
-                <button
-                  onClick={() => setShowAll(!showAll)}
-                  className="text-[11px] text-indigo-400 hover:text-indigo-300 underline font-semibold cursor-pointer"
-                >
-                  {showAll ? "Show Less" : `View All (${allSessions.length})`}
-                </button>
-                <span className="text-[10px] text-slate-500 font-mono">{allSessions.length} sessions</span>
-              </div>
-            )}
           </div>
 
           {/* Column 2: Replay Explorer Detailed Panel */}
@@ -150,13 +137,13 @@ export default memo(function ReplayLayout() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    <button 
+                    <button
                       onClick={() => alert(`Triggering replay validation for ${activeSession.session_id}`)}
                       className="flex items-center justify-center gap-1 bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold py-1 rounded transition-colors text-[10px] cursor-pointer"
                     >
                       <RotateCw size={10} /> Verify Lineage
                     </button>
-                    <button 
+                    <button
                       onClick={() => alert(`Starting deterministic instruction execution replay for ${activeSession.session_id}`)}
                       className="flex items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1 rounded transition-colors text-[10px] cursor-pointer"
                     >

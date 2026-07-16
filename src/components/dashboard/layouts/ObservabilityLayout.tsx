@@ -11,10 +11,10 @@ export default memo(function ObservabilityLayout() {
   // Map telemetry data points to chart series
   const chartData = useMemo(() => data
     ? (data.metrics?.response_times ?? []).map((rt, i) => ({
-        time: rt ? formatTime(rt.timestamp) : "",
-        response: rt && rt.value != null ? +rt.value.toFixed(1) : 0,
-        rate: data.metrics?.event_rates?.[i]?.value != null ? +(data.metrics.event_rates[i].value).toFixed(1) : 0,
-      }))
+      time: rt ? formatTime(rt.timestamp) : "",
+      response: rt && rt.value != null ? +rt.value.toFixed(1) : 0,
+      rate: data.metrics?.event_rates?.[i]?.value != null ? +(data.metrics.event_rates[i].value).toFixed(1) : 0,
+    }))
     : [], [data]);
 
   const series = useMemo(() => [
@@ -59,12 +59,12 @@ export default memo(function ObservabilityLayout() {
     >
       {data && chartData.length > 0 && (
         <div className="flex flex-col flex-1 min-h-0">
-          <TelemetryCard 
+          <TelemetryCard
             data={chartData}
             xAxisKey="time"
             series={series}
             summaryMetrics={summaryMetrics}
-            chartHeight={120}
+            traceId={(data as any)?.trace_id}
           />
         </div>
       )}

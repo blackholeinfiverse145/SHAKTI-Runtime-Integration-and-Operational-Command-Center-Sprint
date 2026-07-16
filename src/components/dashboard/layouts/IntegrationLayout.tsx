@@ -55,21 +55,23 @@ export default memo(function IntegrationLayout() {
       }
     >
       {hasData && (
-        <div className="flex flex-col gap-4 h-full">
+        <div className="flex flex-col gap-4 h-full min-h-0">
           {integrations.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
-              {integrations.map(int => (
-                <IntegrationCard 
-                  key={int.name}
-                  systemName={int.name}
-                  status={int.status}
-                  latency={int.latency}
-                  syncStatus={int.syncStatus}
-                />
-              ))}
+            <div className="overflow-y-auto max-h-[130px] min-h-0 shrink-0 pr-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+                {integrations.map(int => (
+                  <IntegrationCard
+                    key={int.name}
+                    systemName={int.name}
+                    status={int.status}
+                    latency={int.latency}
+                    syncStatus={int.syncStatus}
+                  />
+                ))}
+              </div>
             </div>
           ) : (
-            <p className="text-xs text-slate-500 text-center py-3">No Runtime Data Available</p>
+            <p className="text-xs text-slate-500 text-center py-3 shrink-0">No Runtime Data Available</p>
           )}
 
           <div className="flex-1 flex flex-col min-h-0">
@@ -77,9 +79,9 @@ export default memo(function IntegrationLayout() {
             {(alerts.data?.alerts ?? []).length === 0 ? (
               <p className="text-xs text-slate-500 text-center py-4">No Runtime Data Available</p>
             ) : (
-              <div className="space-y-1.5 overflow-y-auto flex-1 min-h-0 pr-1">
+              <div className="space-y-1.5 overflow-y-auto flex-1 min-h-0 max-h-[200px] pr-1">
                 {(alerts.data?.alerts ?? []).map((a) => (
-                  <AlertCard 
+                  <AlertCard
                     key={a.id}
                     message={a.message}
                     severity={toSeverity(a.severity)}

@@ -72,7 +72,7 @@ export default memo(function OperatorConsoleLayout() {
           {operators.length > 0 ? (
             <div className="grid grid-cols-2 gap-2">
               {operators.slice(0, 2).map(op => (
-                <OperatorCard 
+                <OperatorCard
                   key={op.name}
                   name={op.name}
                   role={op.role}
@@ -91,9 +91,9 @@ export default memo(function OperatorConsoleLayout() {
             {activities.length === 0 ? (
               <p className="text-xs text-slate-500 text-center py-4">No Runtime Data Available</p>
             ) : (
-              <div className="space-y-0 overflow-y-auto flex-1 min-h-0 pr-2">
+              <div className="space-y-0 overflow-y-auto flex-1 min-h-0 max-h-[200px] pr-2">
                 {activities.map((a, i, arr) => (
-                  <TimelineCard 
+                  <TimelineCard
                     key={a.id}
                     message={a.message}
                     source={a.source}
