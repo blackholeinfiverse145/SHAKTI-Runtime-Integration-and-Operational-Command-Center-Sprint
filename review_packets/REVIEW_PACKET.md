@@ -23,6 +23,8 @@ All documentation for reviewer review is organized inside the [`review_packets/`
 ```
 review_packets/
 ├── REVIEW_PACKET.md                      # Master reviewer packet summary
+├── demo/
+│   └── demo recording.mp4                # Video recording of dashboard functionalities
 └── code_packet/
     ├── architecture_overview.md          # Guide to components, directories, and data integration
     ├── changed_files.md                  # Summary of layout and test changes
@@ -139,3 +141,10 @@ Detailed environment instructions are documented in [`deployment_guide.md`](file
 
 ## 13. Reviewer Notes
 All dashboard cards are fully constrained and scrollable. Chart tooltip hovers, sticky table headers, components card layouts, and unit test suites are fully verified and ready for production staging.
+
+---
+
+## 14. Demo Recording
+A complete visual walk-through of the dashboard functionalities (loading states, scrolling card containers, Telemetry chart tooltips, and offline caching banners) has been recorded as a video demo:
+*   **Recording Path**: [`review_packets/demo/demo recording.mp4`](file:///c:/Pratik_Bhuwad/shakti-command-center/review_packets/demo/demo%20recording.mp4)
+
