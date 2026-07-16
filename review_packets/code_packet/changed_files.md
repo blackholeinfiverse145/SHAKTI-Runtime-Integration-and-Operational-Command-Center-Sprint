@@ -24,7 +24,7 @@ Summary of all frontend files changed in the `shakti-command-center/` repository
     *   *Updates*: Removed `.slice(0, 6)` slicing and toggle; made table headers sticky; wrapped the table inside a `max-h-[200px]` scroll wrapper.
 7.  **[`ReplayLayout.tsx`](file:///c:/Pratik_Bhuwad/shakti-command-center/src/components/dashboard/layouts/ReplayLayout.tsx)**
     *   *Role*: Replay session validation lists layout.
-    *   *Updates*: Removed `.slice(0, 6)` slicing and toggle button; made table headers sticky; wrapped the sessions list table inside a `max-h-[220px]` scroll container.
+    *   *Updates*: Removed default `.slice(0, 6)` slicing, toggle button, and the actions/metadata index block (Performance index and Validation signature) completely; made table headers sticky; wrapped the sessions list table inside a `max-h-[220px]` scroll container.
 8.  **[`EvidenceLayout.tsx`](file:///c:/Pratik_Bhuwad/shakti-command-center/src/components/dashboard/layouts/EvidenceLayout.tsx)**
     *   *Role*: Validation signals and code blueprint details layout.
     *   *Updates*: Constrained the Bucket Evidence container to `max-h-[300px]` and the Artifact Viewer details block to `max-h-[250px]`.

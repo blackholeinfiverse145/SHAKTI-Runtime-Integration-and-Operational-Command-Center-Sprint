@@ -35,25 +35,25 @@ This document maps the screenshots stored in the repository's `evidence/` direct
 *   **What it proves**: Proves that workflow progress pipelines display correctly and table rows are clearly visible.
 
 ### 6. Operator Console Feed
-*   **Filename**: `10_operator_timeline.png`
+*   **Filename**: `9_operator_timeline.png`
 *   **Purpose**: Verify active operator cards and console logs timelines.
 *   **Caption**: "Operator Console Details Panel"
 *   **What it proves**: Proves that operator statuses are visible and console timelines scroll.
 
 ### 7. Runtime Health Table
-*   **Filename**: `11_runtime_health.png`
+*   **Filename**: `10_runtime_health.png`
 *   **Purpose**: Verify registry components statuses and response latencies.
 *   **Caption**: "Runtime Health Registry Table"
 *   **What it proves**: Proves that score metrics, telemetry summaries, and status grids render properly.
 
 ### 8. Simulation & Replay Explorer
-*   **Filename**: `12_replay_view.png`
+*   **Filename**: `11_replay_view.png`
 *   **Purpose**: Verify simulation sessions and validation verification handlers.
 *   **Caption**: "Replay Session Explorer"
 *   **What it proves**: Proves that replay lists are selectable and verification logs render correctly.
 
 ### 9. Evidence Intelligence Panels
-*   **Filename**: `13_evidence_intelligence.png`
+*   **Filename**: `12_evidence_intelligence.png`
 *   **Purpose**: Verify Bucket Evidence metrics and execution chain artifact details.
 *   **Caption**: "Evidence Details & Chain Blueprint Viewer"
 *   **What it proves**: Proves that telemetry logs and blueprint instructions render in side-by-side columns.

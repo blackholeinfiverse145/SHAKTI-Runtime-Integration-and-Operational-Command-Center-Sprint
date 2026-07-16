@@ -1,53 +1,56 @@
 # SHAKTI Command Center — Screenshot Captions
 
-This document lists the official captions for the 26 screenshots demonstrating compliance with the SHAKTI Operational Command Center system specifications.
+This document lists the official captions for the screenshots demonstrating compliance with the SHAKTI Operational Command Center system specifications.
 
 ---
 
 ### `01_dashboard_startup.png`
 * **Caption:** Demonstrates the application's initial cold-start phase with layout skeleton placeholders displaying in all zones. This verifies that layout components mount and load gracefully before the async API requests complete.
 
-### `02_executive_overview.png`
-* **Caption:** Demonstrates the entire dashboard grid layout running in a standard 1920×1080 resolution viewport. This satisfies the core design requirement of fitting primary executive metrics on a single screen to eliminate excessive scrolling.
+### `02_executive_overview-1.png`
+* **Caption:** Demonstrates the first section of the dashboard grid layout running in a standard desktop viewport. This satisfies the core design requirement of fitting primary executive metrics on a single screen to eliminate excessive scrolling.
+
+### `02_executive_overview-2.png`
+* **Caption:** Demonstrates the second section of the dashboard grid layout running in a standard desktop viewport, showing the remaining widgets.
 
 ### `03_executive_kpis.png`
 * **Caption:** Displays the top-row Executive Summary row containing prominently styled KPI cards. This satisfies the hierarchy requirement by emphasizing 30px key metric values alongside secondary unit labels and color-coded trend indicators.
 
 ### `04_operations_compute.png`
-* **Caption:** Highlights the Operations & Compute zone rendering the API endpoint health tiles and the active operations queue. This verifies that the operational list correctly limits output to the top 4 entries with an overflow indicator to preserve vertical space.
+* **Caption:** Highlights the Operations & Compute zone rendering the API endpoint health tiles and the active operations queue. This verifies that the operational list correctly displays active compute metrics inside a stable container.
 
 ### `05_integrations_alerts.png`
 * **Caption:** Showcases the Integrations grid and the Live Alert Feed container. This demonstrates the data-dense integration card tiles layout and a prioritized alert queue with highlighted severity tags.
 
 ### `06_decision_intelligence.png`
-* **Caption:** Focuses on the Decision Intelligence card showing current AI capabilities alongside the latest executive decision. This verifies the layout density requirement by condensing decisions to the single most recent item.
+* **Caption:** Focuses on the Decision Intelligence card showing current AI capabilities alongside the recent decisions. This verifies the layout density requirement by sorting decisions descending by timestamp.
 
 ### `07_live_telemetry.png`
 * **Caption:** Highlights the Live Telemetry area chart with an active hover tooltip overlay displaying data values. This demonstrates that chart axes, legends, and interactive tooltips are formatted to the specified typography sizes for readability.
 
 ### `08_workflow_monitoring.png`
-* **Caption:** Captures the Active Workflows table displaying the default view of 8 rows of tasks. This demonstrates the space-efficient row layout, 4-step pipeline status indicators, and the visible View All toggle.
+* **Caption:** Captures the Active Workflows table displaying the default view of tasks. This demonstrates the space-efficient row layout, 4-step pipeline status indicators, and the sticky table header layout.
 
-### `09_workflow_view_all.png`
-* **Caption:** Displays the Active Workflows table expanded to show all 10 rows after clicking the toggle link. This validates that the workflow table successfully toggles view states while keeping the list boundary contained.
+### `9_operator_timeline.png`
+* **Caption:** Focuses on the Operator Console showing active operator cards and the activity log timeline feed. This satisfies the requirement of maintaining an activity timeline to eliminate visual empty space.
 
-### `10_operator_timeline.png`
-* **Caption:** Focuses on the Operator Console showing active operator cards and the activity log timeline feed. This satisfies the requirement of maintaining an activity timeline containing at least 8 events to eliminate visual empty space.
+### `10_runtime_health.png`
+* **Caption:** Captures the Runtime Health card showing the core health score progress bar, telemetry summary, and active components. This verifies the integration of the system-level status endpoint.
 
-### `11_runtime_health.png`
-* **Caption:** Captures the Runtime Health card showing the core health score progress bar, telemetry summary, and 6 active components. This verifies the integration of the system-level status endpoint and the subcomponent view limits.
+### `11_replay_view.png`
+* **Caption:** Shows the Simulation & Replay table with active sessions, inline operation indicators, and progress bars. This demonstrates high information density by replacing repetitive simulation cards with a compact, tabular view.
 
-### `12_replay_view.png`
-* **Caption:** Shows the Simulation & Replay table with 6 active sessions, inline operation indicators, and progress bars. This demonstrates high information density by replacing repetitive simulation cards with a compact, tabular view.
+### `12_evidence_intelligence.png`
+* **Caption:** Displays the Evidence & Intelligence section located at the bottom of the dashboard page. This validates that evidence cards containing confidence ratings and categorization icons span the layout.
 
-### `13_evidence_intelligence.png`
-* **Caption:** Displays the full-width Evidence & Intelligence section located at the bottom of the dashboard page. This validates that evidence cards containing confidence ratings and categorization icons span the full horizontal page width.
-
-### `14_desktop_1920x1080.png`
+### `13_desktop_1920x1080.png`
 * **Caption:** Shows the complete system dashboard styled for 1920×1080 screen viewports. This confirms the page structure scales properly to maintain a clean layout balance without clipping content.
 
-### `15_tablet_768x1024.png`
+### `14_tablet_768x1024.png`
 * **Caption:** Shows the dashboard reflowing to a tablet viewport layout at 768×1024. This confirms the responsive grid successfully shifts columns and wraps elements when horizontal space is limited.
+
+### `15_tablet_768x1024.png`
+* **Caption:** Alternate tablet viewport showing the dashboard reflowing to a tablet viewport layout.
 
 ### `16_mobile_375x667.png`
 * **Caption:** Demonstrates the mobile view layout at 375×667 resolution. This validates that all dashboard zones collapse into a single-column layout with vertical scrolling, and integration tiles wrap to a single column.
@@ -75,9 +78,6 @@ This document lists the official captions for the 26 screenshots demonstrating c
 
 ### `24_dark_theme.png`
 * **Caption:** Displays the dashboard rendering in its default high-contrast dark color palette. This documents the dark theme design that meets standard operations command room requirements.
-
-### `25_light_theme.png`
-* **Caption:** Documents that light theme support is not currently implemented in the command center. Only dark mode is active to minimize eye strain in low-light NOC environments.
 
 ### `26_typography_hierarchy.png`
 * **Caption:** Highlights the unified 7-level type hierarchy applied across all dashboard views. This confirms the typography pass has been successfully executed, standardizing font sizes from the 21px title down to 11px metadata.

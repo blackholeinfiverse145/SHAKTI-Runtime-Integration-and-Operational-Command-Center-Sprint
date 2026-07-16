@@ -1,5 +1,5 @@
 import { memo, useState, useMemo } from "react";
-import { Play, CheckCircle, AlertOctagon, RotateCw, ShieldCheck } from "lucide-react";
+import { Play, CheckCircle, AlertOctagon } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { ReplayCard } from "@/components/dashboard/primitives/ReplayCard";
 import { useRuntimeDashboard } from "@/hooks/useQueries";
@@ -110,7 +110,7 @@ export default memo(function ReplayLayout() {
           {/* Column 2: Replay Explorer Detailed Panel */}
           <div className="lg:col-span-5 flex flex-col min-h-0">
             {activeSession ? (
-              <div className="flex flex-col h-full gap-2 justify-between">
+              <div className="flex flex-col h-full gap-3 justify-start">
                 <div>
                   <h3 className="text-xs font-semibold text-slate-400 mb-1">Replay Explorer</h3>
                   <ReplayCard
@@ -121,35 +121,6 @@ export default memo(function ReplayLayout() {
                     sessionId={activeSession.session_id}
                     timeSubtext={activeSession.started_at ? formatRelativeTime(activeSession.started_at) : undefined}
                   />
-                </div>
-
-                {/* Operations & actions */}
-                <div className="bg-slate-900/35 border border-slate-800/80 rounded p-1.5 space-y-1.5 text-[11px]">
-                  <div className="flex justify-between text-slate-500">
-                    <span>Performance index:</span>
-                    <span className="text-slate-350 font-mono">1.00 (Nominal)</span>
-                  </div>
-                  <div className="flex justify-between text-slate-500">
-                    <span>Validation signature:</span>
-                    <span className="text-emerald-400 flex items-center gap-0.5 font-mono text-[10px]">
-                      <ShieldCheck size={10} /> Validated
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    <button
-                      onClick={() => alert(`Triggering replay validation for ${activeSession.session_id}`)}
-                      className="flex items-center justify-center gap-1 bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold py-1 rounded transition-colors text-[10px] cursor-pointer"
-                    >
-                      <RotateCw size={10} /> Verify Lineage
-                    </button>
-                    <button
-                      onClick={() => alert(`Starting deterministic instruction execution replay for ${activeSession.session_id}`)}
-                      className="flex items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1 rounded transition-colors text-[10px] cursor-pointer"
-                    >
-                      <Play size={10} /> Replay Task
-                    </button>
-                  </div>
                 </div>
               </div>
             ) : (

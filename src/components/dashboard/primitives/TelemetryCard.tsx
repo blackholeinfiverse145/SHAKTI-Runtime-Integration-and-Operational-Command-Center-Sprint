@@ -88,7 +88,7 @@ export const TelemetryCard = memo(function TelemetryCard({
       )}
 
       {hasData ? (
-        <div className="relative flex-1 min-h-0 w-full">
+        <div className="relative flex-1 min-h-[200px] w-full">
           <ResponsiveContainer width="100%" height={chartHeight}>
             <AreaChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 5 }}>
               <defs>
@@ -100,29 +100,29 @@ export const TelemetryCard = memo(function TelemetryCard({
                 ))}
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.25} vertical={false} />
-              <XAxis 
-                dataKey={xAxisKey} 
-                tick={{ fontSize: 11, fill: "#64748b" }} 
-                tickLine={false} 
-                axisLine={false} 
+              <XAxis
+                dataKey={xAxisKey}
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                tickLine={false}
+                axisLine={false}
                 interval="preserveEnd"
                 minTickGap={20}
               />
-              <YAxis 
-                tick={{ fontSize: 11, fill: "#64748b" }} 
-                tickLine={false} 
-                axisLine={false} 
+              <YAxis
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                tickLine={false}
+                axisLine={false}
               />
               <Tooltip content={<CustomTooltip traceId={traceId} />} />
               {series.map((s, i) => (
-                <Area 
+                <Area
                   key={s.dataKey}
-                  type="monotone" 
-                  dataKey={s.dataKey} 
+                  type="monotone"
+                  dataKey={s.dataKey}
                   name={s.name}
-                  stroke={s.color} 
-                  strokeWidth={1.5} 
-                  fill={`url(#gradient-${i})`} 
+                  stroke={s.color}
+                  strokeWidth={1.5}
+                  fill={`url(#gradient-${i})`}
                   dot={false}
                   activeDot={{ r: 4, strokeWidth: 0 }}
                 />
