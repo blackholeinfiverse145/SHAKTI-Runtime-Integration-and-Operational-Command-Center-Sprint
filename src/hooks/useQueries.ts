@@ -10,6 +10,8 @@ import {
   fetchTelemetryDashboard,
   fetchRepositoryRegistry,
   fetchBuildRegistry,
+  fetchMigrationQueue,
+  fetchReviewQueue,
 } from "@/api/endpoints";
 
 // GET /health — lightweight liveness probe
@@ -99,6 +101,26 @@ export const useBuildRegistry = () =>
   useQuery({
     queryKey: ["registry-builds"],
     queryFn: fetchBuildRegistry,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /queue/migration → BHEX Migration Queue
+export const useMigrationQueue = () =>
+  useQuery({
+    queryKey: ["queue-migration"],
+    queryFn: fetchMigrationQueue,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /queue/review → BHEX Review Queue
+export const useReviewQueue = () =>
+  useQuery({
+    queryKey: ["queue-review"],
+    queryFn: fetchReviewQueue,
     refetchInterval: 10_000,
     placeholderData: keepPreviousData,
     retry: 1,

@@ -220,3 +220,40 @@ export interface BuildRegistryResponse {
   total_builds: number;
   builds: BuildRegistryItem[];
 }
+
+// ─── GET /queue/migration (Operational Migration Queue) ─────────────────────
+
+export interface MigrationQueueItem {
+  migration_token: string;
+  repository: string;
+  assigned_engineer: string;
+  current_stage: string;
+  progress: number;
+  blocked_reason: string | null;
+  evidence_submitted: boolean | string;
+  review_status: string;
+}
+
+export interface MigrationQueueResponse {
+  timestamp: string;
+  total_migrations: number;
+  migrations: MigrationQueueItem[];
+}
+
+// ─── GET /queue/review (Operational Review Queue) ────────────────────────────
+
+export interface ReviewQueueItem {
+  submission: string;
+  engineer: string;
+  reviewer: string;
+  review_status: string;
+  testing_status: string;
+  required_fixes: number | string;
+  priority: string;
+}
+
+export interface ReviewQueueResponse {
+  timestamp: string;
+  total_reviews: number;
+  reviews: ReviewQueueItem[];
+}

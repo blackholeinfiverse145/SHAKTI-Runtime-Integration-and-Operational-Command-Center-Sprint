@@ -10,6 +10,8 @@ import type {
   TelemetryDashboardResponse,
   RepositoryRegistryResponse,
   BuildRegistryResponse,
+  MigrationQueueResponse,
+  ReviewQueueResponse,
 } from "@/types/runtime";
 
 export async function fetchHealth(): Promise<HealthResponse> {
@@ -59,5 +61,15 @@ export async function fetchRepositoryRegistry(): Promise<RepositoryRegistryRespo
 
 export async function fetchBuildRegistry(): Promise<BuildRegistryResponse> {
   const { data } = await apiClient.get<BuildRegistryResponse>("/registry/builds");
+  return data;
+}
+
+export async function fetchMigrationQueue(): Promise<MigrationQueueResponse> {
+  const { data } = await apiClient.get<MigrationQueueResponse>("/queue/migration");
+  return data;
+}
+
+export async function fetchReviewQueue(): Promise<ReviewQueueResponse> {
+  const { data } = await apiClient.get<ReviewQueueResponse>("/queue/review");
   return data;
 }

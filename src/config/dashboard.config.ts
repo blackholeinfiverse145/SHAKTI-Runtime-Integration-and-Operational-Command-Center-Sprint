@@ -79,6 +79,16 @@ export const defaultDashboardConfig: DashboardConfig = {
       label: "Build Registry Layout",
       colSpan: "col-span-12 lg:col-span-6",
     },
+    migrationQueue: {
+      visible: true,
+      label: "Migration Queue Layout",
+      colSpan: "col-span-12 lg:col-span-6",
+    },
+    reviewQueue: {
+      visible: true,
+      label: "Review Queue Layout",
+      colSpan: "col-span-12 lg:col-span-6",
+    },
   },
 
   features: {

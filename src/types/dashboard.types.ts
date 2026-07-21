@@ -45,6 +45,8 @@ export interface DashboardZones {
   evidencePanel: ZoneConfig;
   repositoryRegistry?: ZoneConfig;
   buildRegistry?: ZoneConfig;
+  migrationQueue?: ZoneConfig;
+  reviewQueue?: ZoneConfig;
 }
 
 // ─── Feature Flags ────────────────────────────────────────────────────────────
