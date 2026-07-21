@@ -109,6 +109,11 @@ export const defaultDashboardConfig: DashboardConfig = {
       label: "Delivery Intelligence Layout",
       colSpan: "col-span-12 lg:col-span-6",
     },
+    capabilityDependencyGraph: {
+      visible: true,
+      label: "Capability Dependency Graph Layout",
+      colSpan: "col-span-12",
+    },
   },
 
   features: {

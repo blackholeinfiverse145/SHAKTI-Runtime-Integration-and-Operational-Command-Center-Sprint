@@ -17,6 +17,7 @@ const CapabilityRegistryLayout = lazy(() => import("@/components/dashboard/layou
 const EmployeeExecutionLayout = lazy(() => import("@/components/dashboard/layouts/EmployeeExecutionLayout"));
 const EngineeringCapacityLayout = lazy(() => import("@/components/dashboard/layouts/EngineeringCapacityLayout"));
 const DeliveryIntelligenceLayout = lazy(() => import("@/components/dashboard/layouts/DeliveryIntelligenceLayout"));
+const CapabilityDependencyGraphLayout = lazy(() => import("@/components/dashboard/layouts/CapabilityDependencyGraphLayout"));
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
@@ -208,6 +209,17 @@ function DashboardGrid() {
           <ErrorBoundary fallbackTitle="Delivery Intelligence Crashed">
             <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
               <DeliveryIntelligenceLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Row 12 — BHEX Operational Surface: Capability Dependency Graph */}
+      {zones.capabilityDependencyGraph?.visible && (
+        <div className={zones.capabilityDependencyGraph.colSpan}>
+          <ErrorBoundary fallbackTitle="Capability Dependency Graph Crashed">
+            <Suspense fallback={<Skeleton className="h-96 rounded-lg bg-slate-800/40" />}>
+              <CapabilityDependencyGraphLayout />
             </Suspense>
           </ErrorBoundary>
         </div>

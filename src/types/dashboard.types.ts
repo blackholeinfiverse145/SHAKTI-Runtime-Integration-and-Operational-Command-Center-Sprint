@@ -51,6 +51,7 @@ export interface DashboardZones {
   employeeExecution?: ZoneConfig;
   engineeringCapacity?: ZoneConfig;
   deliveryIntelligence?: ZoneConfig;
+  capabilityDependencyGraph?: ZoneConfig;
 }
 
 // ─── Feature Flags ────────────────────────────────────────────────────────────
