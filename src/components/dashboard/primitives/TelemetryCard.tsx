@@ -23,7 +23,7 @@ export interface TelemetryCardProps {
   /** Array of summary metrics to display above the chart */
   summaryMetrics?: TelemetrySummaryMetric[];
   /** Height of the chart component in pixels or percentage string */
-  chartHeight?: number | string;
+  chartHeight?: number | `${number}%`;
   /** Optional overall query tracing ID to display inside the tooltip */
   traceId?: string;
 }

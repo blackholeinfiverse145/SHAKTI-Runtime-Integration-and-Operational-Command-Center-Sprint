@@ -43,6 +43,8 @@ export interface DashboardZones {
   systemHealth: ZoneConfig;
   runtimeSessions: ZoneConfig;
   evidencePanel: ZoneConfig;
+  repositoryRegistry?: ZoneConfig;
+  buildRegistry?: ZoneConfig;
 }
 
 // ─── Feature Flags ────────────────────────────────────────────────────────────

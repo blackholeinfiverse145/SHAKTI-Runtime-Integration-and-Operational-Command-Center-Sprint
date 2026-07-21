@@ -9,6 +9,8 @@ const OperatorConsoleLayout = lazy(() => import("@/components/dashboard/layouts/
 const RuntimeHealthLayout = lazy(() => import("@/components/dashboard/layouts/RuntimeHealthLayout"));
 const ReplayLayout = lazy(() => import("@/components/dashboard/layouts/ReplayLayout"));
 const EvidenceLayout = lazy(() => import("@/components/dashboard/layouts/EvidenceLayout"));
+const RepositoryRegistryLayout = lazy(() => import("@/components/dashboard/layouts/RepositoryRegistryLayout"));
+const BuildRegistryLayout = lazy(() => import("@/components/dashboard/layouts/BuildRegistryLayout"));
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
@@ -118,6 +120,26 @@ function DashboardGrid() {
           <ErrorBoundary fallbackTitle="Evidence Crashed">
             <Suspense fallback={<Skeleton className="h-48 rounded-lg bg-slate-800/40" />}>
               <EvidenceLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Row 7 — BHEX Operational Surface: Repository & Build Registries */}
+      {zones.repositoryRegistry?.visible && (
+        <div className={zones.repositoryRegistry.colSpan}>
+          <ErrorBoundary fallbackTitle="Repository Registry Crashed">
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <RepositoryRegistryLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+      {zones.buildRegistry?.visible && (
+        <div className={zones.buildRegistry.colSpan}>
+          <ErrorBoundary fallbackTitle="Build Registry Crashed">
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <BuildRegistryLayout />
             </Suspense>
           </ErrorBoundary>
         </div>

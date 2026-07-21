@@ -69,6 +69,16 @@ export const defaultDashboardConfig: DashboardConfig = {
       label: "Evidence Layout",
       colSpan: "col-span-12",
     },
+    repositoryRegistry: {
+      visible: true,
+      label: "Repository Registry Layout",
+      colSpan: "col-span-12 lg:col-span-6",
+    },
+    buildRegistry: {
+      visible: true,
+      label: "Build Registry Layout",
+      colSpan: "col-span-12 lg:col-span-6",
+    },
   },
 
   features: {

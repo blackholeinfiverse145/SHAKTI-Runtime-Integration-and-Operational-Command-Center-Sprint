@@ -8,6 +8,8 @@ import {
   fetchAlertsDashboard,
   fetchRuntimeDashboard,
   fetchTelemetryDashboard,
+  fetchRepositoryRegistry,
+  fetchBuildRegistry,
 } from "@/api/endpoints";
 
 // GET /health — lightweight liveness probe
@@ -80,4 +82,24 @@ export const useTelemetryDashboard = () =>
     queryFn: fetchTelemetryDashboard,
     refetchInterval: 10_000,
     placeholderData: keepPreviousData,
+  });
+
+// GET /registry/repositories → BHEX Repository Registry
+export const useRepositoryRegistry = () =>
+  useQuery({
+    queryKey: ["registry-repositories"],
+    queryFn: fetchRepositoryRegistry,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /registry/builds → BHEX Build Registry
+export const useBuildRegistry = () =>
+  useQuery({
+    queryKey: ["registry-builds"],
+    queryFn: fetchBuildRegistry,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
   });

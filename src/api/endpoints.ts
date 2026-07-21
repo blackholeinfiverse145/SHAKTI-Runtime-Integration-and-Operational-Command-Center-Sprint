@@ -8,6 +8,8 @@ import type {
   AlertsDashboardResponse,
   RuntimeDashboardResponse,
   TelemetryDashboardResponse,
+  RepositoryRegistryResponse,
+  BuildRegistryResponse,
 } from "@/types/runtime";
 
 export async function fetchHealth(): Promise<HealthResponse> {
@@ -47,5 +49,15 @@ export async function fetchRuntimeDashboard(): Promise<RuntimeDashboardResponse>
 
 export async function fetchTelemetryDashboard(): Promise<TelemetryDashboardResponse> {
   const { data } = await apiClient.get<TelemetryDashboardResponse>("/dashboard/telemetry");
+  return data;
+}
+
+export async function fetchRepositoryRegistry(): Promise<RepositoryRegistryResponse> {
+  const { data } = await apiClient.get<RepositoryRegistryResponse>("/registry/repositories");
+  return data;
+}
+
+export async function fetchBuildRegistry(): Promise<BuildRegistryResponse> {
+  const { data } = await apiClient.get<BuildRegistryResponse>("/registry/builds");
   return data;
 }

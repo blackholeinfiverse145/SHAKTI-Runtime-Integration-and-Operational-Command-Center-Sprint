@@ -178,3 +178,45 @@ export interface TelemetryDashboardResponse {
   }[];
   classification_breakdown?: Record<string, number>;
 }
+
+// ─── GET /registry/repositories (BHEX Operational Surface) ────────────────────
+
+export interface RepositoryRegistryItem {
+  repository: string;
+  owner: string;
+  layer: string;
+  capability: string;
+  branch: string;
+  status: string;
+  last_commit: string;
+  last_activity: string;
+  review_status: string;
+  migration_status: string;
+  documentation_status: string;
+  integration_status: string;
+}
+
+export interface RepositoryRegistryResponse {
+  timestamp: string;
+  total_repositories: number;
+  repositories: RepositoryRegistryItem[];
+}
+
+// ─── GET /registry/builds (BHEX Operational Surface) ──────────────────────────
+
+export interface BuildRegistryItem {
+  build_id: string;
+  repository: string;
+  branch: string;
+  pipeline_status: string;
+  build_duration: string | number;
+  deployment_status: string;
+  evidence: string;
+  release_readiness: string;
+}
+
+export interface BuildRegistryResponse {
+  timestamp: string;
+  total_builds: number;
+  builds: BuildRegistryItem[];
+}
