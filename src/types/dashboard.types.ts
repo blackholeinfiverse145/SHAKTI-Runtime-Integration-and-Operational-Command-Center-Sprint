@@ -48,6 +48,9 @@ export interface DashboardZones {
   migrationQueue?: ZoneConfig;
   reviewQueue?: ZoneConfig;
   capabilityRegistry?: ZoneConfig;
+  employeeExecution?: ZoneConfig;
+  engineeringCapacity?: ZoneConfig;
+  deliveryIntelligence?: ZoneConfig;
 }
 
 // ─── Feature Flags ────────────────────────────────────────────────────────────

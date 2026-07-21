@@ -14,6 +14,9 @@ const BuildRegistryLayout = lazy(() => import("@/components/dashboard/layouts/Bu
 const MigrationQueueLayout = lazy(() => import("@/components/dashboard/layouts/MigrationQueueLayout"));
 const ReviewQueueLayout = lazy(() => import("@/components/dashboard/layouts/ReviewQueueLayout"));
 const CapabilityRegistryLayout = lazy(() => import("@/components/dashboard/layouts/CapabilityRegistryLayout"));
+const EmployeeExecutionLayout = lazy(() => import("@/components/dashboard/layouts/EmployeeExecutionLayout"));
+const EngineeringCapacityLayout = lazy(() => import("@/components/dashboard/layouts/EngineeringCapacityLayout"));
+const DeliveryIntelligenceLayout = lazy(() => import("@/components/dashboard/layouts/DeliveryIntelligenceLayout"));
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
@@ -174,6 +177,37 @@ function DashboardGrid() {
           <ErrorBoundary fallbackTitle="Capability Registry Crashed">
             <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
               <CapabilityRegistryLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Row 10 — BHEX Operational Surface: Employee Execution */}
+      {zones.employeeExecution?.visible && (
+        <div className={zones.employeeExecution.colSpan}>
+          <ErrorBoundary fallbackTitle="Employee Execution Crashed">
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <EmployeeExecutionLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Row 11 — BHEX Operational Surface: Engineering Capacity & Delivery Intelligence */}
+      {zones.engineeringCapacity?.visible && (
+        <div className={zones.engineeringCapacity.colSpan}>
+          <ErrorBoundary fallbackTitle="Engineering Capacity Crashed">
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <EngineeringCapacityLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+      {zones.deliveryIntelligence?.visible && (
+        <div className={zones.deliveryIntelligence.colSpan}>
+          <ErrorBoundary fallbackTitle="Delivery Intelligence Crashed">
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <DeliveryIntelligenceLayout />
             </Suspense>
           </ErrorBoundary>
         </div>

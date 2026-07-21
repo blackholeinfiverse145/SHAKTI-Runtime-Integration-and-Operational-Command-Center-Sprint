@@ -13,6 +13,9 @@ import type {
   MigrationQueueResponse,
   ReviewQueueResponse,
   CapabilityRegistryResponse,
+  EmployeeExecutionResponse,
+  EngineeringCapacityResponse,
+  DeliveryIntelligenceResponse,
 } from "@/types/runtime";
 
 export async function fetchHealth(): Promise<HealthResponse> {
@@ -77,5 +80,20 @@ export async function fetchReviewQueue(): Promise<ReviewQueueResponse> {
 
 export async function fetchCapabilityRegistry(): Promise<CapabilityRegistryResponse> {
   const { data } = await apiClient.get<CapabilityRegistryResponse>("/registry/capabilities");
+  return data;
+}
+
+export async function fetchEmployeeExecution(): Promise<EmployeeExecutionResponse> {
+  const { data } = await apiClient.get<EmployeeExecutionResponse>("/operations/employee-execution");
+  return data;
+}
+
+export async function fetchEngineeringCapacity(): Promise<EngineeringCapacityResponse> {
+  const { data } = await apiClient.get<EngineeringCapacityResponse>("/operations/engineering-capacity");
+  return data;
+}
+
+export async function fetchDeliveryIntelligence(): Promise<DeliveryIntelligenceResponse> {
+  const { data } = await apiClient.get<DeliveryIntelligenceResponse>("/operations/delivery-intelligence");
   return data;
 }

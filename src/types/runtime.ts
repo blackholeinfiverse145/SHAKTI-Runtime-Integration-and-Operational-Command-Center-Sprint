@@ -295,3 +295,45 @@ export interface CapabilityRegistryResponse {
   total_capabilities: number;
   capabilities: CapabilityRegistryItem[];
 }
+
+// ─── GET /operations/employee-execution ──────────────────────────────────────
+
+export interface EmployeeExecutionItem {
+  engineer: string;
+  current_task: string;
+  current_product: string;
+  progress: number;
+  blocked: boolean | string;
+  last_activity: string;
+  todays_contribution: string | number;
+}
+
+export interface EmployeeExecutionResponse {
+  timestamp: string;
+  total_engineers: number;
+  engineers: EmployeeExecutionItem[];
+}
+
+// ─── GET /operations/engineering-capacity ────────────────────────────────────
+
+export interface EngineeringCapacityResponse {
+  timestamp: string;
+  active_developers: number;
+  available_developers: number;
+  blocked_developers: number;
+  review_pending: number;
+  testing_pending: number;
+  deployment_pending: number;
+}
+
+// ─── GET /operations/delivery-intelligence ───────────────────────────────────
+
+export interface DeliveryIntelligenceResponse {
+  timestamp: string;
+  completed_tasks: number;
+  delayed_tasks: number;
+  upcoming_deliveries: number;
+  sprint_health: string;
+  execution_velocity: number | string;
+  repository_activity: string | number;
+}

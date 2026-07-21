@@ -94,6 +94,21 @@ export const defaultDashboardConfig: DashboardConfig = {
       label: "Capability Registry Layout",
       colSpan: "col-span-12",
     },
+    employeeExecution: {
+      visible: true,
+      label: "Employee Execution Layout",
+      colSpan: "col-span-12",
+    },
+    engineeringCapacity: {
+      visible: true,
+      label: "Engineering Capacity Layout",
+      colSpan: "col-span-12 lg:col-span-6",
+    },
+    deliveryIntelligence: {
+      visible: true,
+      label: "Delivery Intelligence Layout",
+      colSpan: "col-span-12 lg:col-span-6",
+    },
   },
 
   features: {

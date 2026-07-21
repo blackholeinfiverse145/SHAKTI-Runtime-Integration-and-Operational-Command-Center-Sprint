@@ -13,6 +13,9 @@ import {
   fetchMigrationQueue,
   fetchReviewQueue,
   fetchCapabilityRegistry,
+  fetchEmployeeExecution,
+  fetchEngineeringCapacity,
+  fetchDeliveryIntelligence,
 } from "@/api/endpoints";
 
 // GET /health — lightweight liveness probe
@@ -132,6 +135,36 @@ export const useCapabilityRegistry = () =>
   useQuery({
     queryKey: ["registry-capabilities"],
     queryFn: fetchCapabilityRegistry,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /operations/employee-execution → Employee Execution Operational View
+export const useEmployeeExecution = () =>
+  useQuery({
+    queryKey: ["operations-employee-execution"],
+    queryFn: fetchEmployeeExecution,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /operations/engineering-capacity → Engineering Capacity Operational View
+export const useEngineeringCapacity = () =>
+  useQuery({
+    queryKey: ["operations-engineering-capacity"],
+    queryFn: fetchEngineeringCapacity,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /operations/delivery-intelligence → Delivery Intelligence Operational View
+export const useDeliveryIntelligence = () =>
+  useQuery({
+    queryKey: ["operations-delivery-intelligence"],
+    queryFn: fetchDeliveryIntelligence,
     refetchInterval: 10_000,
     placeholderData: keepPreviousData,
     retry: 1,
