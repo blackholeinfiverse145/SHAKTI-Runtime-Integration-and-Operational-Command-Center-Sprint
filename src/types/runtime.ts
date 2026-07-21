@@ -80,6 +80,19 @@ export interface OperationsDashboardResponse {
   operations: OperationItem[];
   system_load: number;     // 0–100
   queue_depth: number;
+  pipeline?: {
+    total_traces?: number;
+    total_artifacts?: number;
+    storage_size_mb?: number;
+  };
+  latency_ms?: {
+    p50?: number;
+    p95?: number;
+  };
+  replay?: {
+    total_replays?: number;
+    failed_replays?: number;
+  };
 }
 
 // ─── GET /dashboard/alerts ────────────────────────────────────────────────────
@@ -149,6 +162,11 @@ export interface TelemetryDashboardResponse {
     total_events: number;
     error_rate: number;
     uptime_percentage: number;
+  };
+  insightflow?: {
+    total_events?: number;
+    by_component?: Record<string, number>;
+    by_event_type?: Record<string, number>;
   };
   recent_telemetry?: {
     trace_id: string;
