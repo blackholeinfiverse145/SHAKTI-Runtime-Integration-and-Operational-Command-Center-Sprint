@@ -89,6 +89,11 @@ export const defaultDashboardConfig: DashboardConfig = {
       label: "Review Queue Layout",
       colSpan: "col-span-12 lg:col-span-6",
     },
+    capabilityRegistry: {
+      visible: true,
+      label: "Capability Registry Layout",
+      colSpan: "col-span-12",
+    },
   },
 
   features: {

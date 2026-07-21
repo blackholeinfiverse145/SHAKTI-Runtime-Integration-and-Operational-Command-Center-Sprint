@@ -12,6 +12,7 @@ import {
   fetchBuildRegistry,
   fetchMigrationQueue,
   fetchReviewQueue,
+  fetchCapabilityRegistry,
 } from "@/api/endpoints";
 
 // GET /health — lightweight liveness probe
@@ -121,6 +122,16 @@ export const useReviewQueue = () =>
   useQuery({
     queryKey: ["queue-review"],
     queryFn: fetchReviewQueue,
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    retry: 1,
+  });
+
+// GET /registry/capabilities → BHEX Capability Registry
+export const useCapabilityRegistry = () =>
+  useQuery({
+    queryKey: ["registry-capabilities"],
+    queryFn: fetchCapabilityRegistry,
     refetchInterval: 10_000,
     placeholderData: keepPreviousData,
     retry: 1,

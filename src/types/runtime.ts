@@ -257,3 +257,23 @@ export interface ReviewQueueResponse {
   total_reviews: number;
   reviews: ReviewQueueItem[];
 }
+
+// ─── GET /registry/capabilities (BHEX Capability Registry) ───────────────────
+
+export interface CapabilityRegistryItem {
+  capability_name: string;
+  layer: string;
+  consumers: string[] | number | string;
+  providers: string[] | number | string;
+  owner: string;
+  repository: string;
+  version: string;
+  runtime_health: string;
+  integration_status: string;
+}
+
+export interface CapabilityRegistryResponse {
+  timestamp: string;
+  total_capabilities: number;
+  capabilities: CapabilityRegistryItem[];
+}

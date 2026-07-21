@@ -12,6 +12,7 @@ import type {
   BuildRegistryResponse,
   MigrationQueueResponse,
   ReviewQueueResponse,
+  CapabilityRegistryResponse,
 } from "@/types/runtime";
 
 export async function fetchHealth(): Promise<HealthResponse> {
@@ -71,5 +72,10 @@ export async function fetchMigrationQueue(): Promise<MigrationQueueResponse> {
 
 export async function fetchReviewQueue(): Promise<ReviewQueueResponse> {
   const { data } = await apiClient.get<ReviewQueueResponse>("/queue/review");
+  return data;
+}
+
+export async function fetchCapabilityRegistry(): Promise<CapabilityRegistryResponse> {
+  const { data } = await apiClient.get<CapabilityRegistryResponse>("/registry/capabilities");
   return data;
 }

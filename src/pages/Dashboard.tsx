@@ -13,6 +13,7 @@ const RepositoryRegistryLayout = lazy(() => import("@/components/dashboard/layou
 const BuildRegistryLayout = lazy(() => import("@/components/dashboard/layouts/BuildRegistryLayout"));
 const MigrationQueueLayout = lazy(() => import("@/components/dashboard/layouts/MigrationQueueLayout"));
 const ReviewQueueLayout = lazy(() => import("@/components/dashboard/layouts/ReviewQueueLayout"));
+const CapabilityRegistryLayout = lazy(() => import("@/components/dashboard/layouts/CapabilityRegistryLayout"));
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardConfig } from "@/components/dashboard/DashboardProvider";
@@ -162,6 +163,17 @@ function DashboardGrid() {
           <ErrorBoundary fallbackTitle="Review Queue Crashed">
             <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
               <ReviewQueueLayout />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Row 9 — BHEX Operational Surface: Capability Registry */}
+      {zones.capabilityRegistry?.visible && (
+        <div className={zones.capabilityRegistry.colSpan}>
+          <ErrorBoundary fallbackTitle="Capability Registry Crashed">
+            <Suspense fallback={<Skeleton className="h-64 rounded-lg bg-slate-800/40" />}>
+              <CapabilityRegistryLayout />
             </Suspense>
           </ErrorBoundary>
         </div>
