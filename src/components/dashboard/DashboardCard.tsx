@@ -66,7 +66,7 @@ export function DashboardCard({
   onRetry,
   errorMessage = "Failed to load data",
   isEmpty = false,
-  emptyMessage = "No data available",
+  emptyMessage = "No Runtime Data Available",
   skeletonCount = 4,
   skeletonHeight = "h-14",
   className,
@@ -110,12 +110,13 @@ export function DashboardCard({
           ))}
         </div>
       ) : isError && !hasData ? (
-        <div className="flex flex-col items-center justify-center py-6 gap-2">
-          <p className="text-xs text-red-400">{errorMessage}</p>
+        <div className="flex flex-col items-center justify-center py-8 px-4 flex-1 border border-dashed border-slate-800 rounded-lg bg-slate-900/30 my-auto text-center gap-1">
+          <p className="text-xs font-mono font-medium text-slate-400">No Runtime Data Available</p>
+          <span className="text-[10px] text-slate-600 font-mono">{errorMessage}</span>
           {onRetry && (
             <button
               onClick={onRetry}
-              className="text-xs text-slate-400 hover:text-slate-200 underline"
+              className="text-xs text-slate-400 hover:text-slate-200 underline mt-1.5 font-mono"
             >
               Retry
             </button>

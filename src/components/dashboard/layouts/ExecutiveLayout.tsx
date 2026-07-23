@@ -58,7 +58,7 @@ export default memo(function ExecutiveLayout() {
         hasData: Boolean(engCapacity.data || metrics.data),
         value: engCapacity.data
           ? `${engCapacity.data.active_developers} Active Devs`
-          : metrics.data
+          : metrics.data?.total_requests != null
           ? `${metrics.data.total_requests.toLocaleString()} Reqs`
           : undefined,
         status: engCapacity.data?.blocked_developers
@@ -72,7 +72,7 @@ export default memo(function ExecutiveLayout() {
         id: "repository",
         title: "Repository Health",
         icon: FolderGit2,
-        hasData: Boolean(repoRegistry.data?.total_repositories !== undefined && repoRegistry.data.repositories.length > 0),
+        hasData: Boolean(repoRegistry.data?.total_repositories !== undefined && (repoRegistry.data.repositories ?? []).length > 0),
         value: repoRegistry.data ? `${repoRegistry.data.total_repositories} Repositories` : undefined,
         status: "online",
         detail: "Source Registry Sync",
@@ -84,13 +84,13 @@ export default memo(function ExecutiveLayout() {
         hasData: Boolean(status.data?.overall_status),
         value: status.data ? status.data.overall_status.toUpperCase() : undefined,
         status: status.data ? (toStatus(status.data.overall_status) as OperationalStatus) : "offline",
-        detail: status.data ? `${status.data.components.length} Monitored Services` : undefined,
+        detail: status.data ? `${(status.data.components ?? []).length} Monitored Services` : undefined,
       },
       {
         id: "capability",
         title: "Capability Health",
         icon: Layers,
-        hasData: Boolean(capRegistry.data?.total_capabilities !== undefined && capRegistry.data.capabilities.length > 0),
+        hasData: Boolean(capRegistry.data?.total_capabilities !== undefined && (capRegistry.data.capabilities ?? []).length > 0),
         value: capRegistry.data ? `${capRegistry.data.total_capabilities} Capabilities` : undefined,
         status: "online",
         detail: "Ecosystem Capabilities",
@@ -99,7 +99,7 @@ export default memo(function ExecutiveLayout() {
         id: "employee",
         title: "Employee Health",
         icon: UserCheck,
-        hasData: Boolean(employeeExec.data?.total_engineers !== undefined && employeeExec.data.engineers.length > 0),
+        hasData: Boolean(employeeExec.data?.total_engineers !== undefined && (employeeExec.data.engineers ?? []).length > 0),
         value: employeeExec.data ? `${employeeExec.data.total_engineers} Engineers` : undefined,
         status: "online",
         detail: "Active Contributions",
@@ -126,7 +126,7 @@ export default memo(function ExecutiveLayout() {
         id: "review",
         title: "Review Health",
         icon: ClipboardCheck,
-        hasData: Boolean(reviewQueue.data?.total_reviews !== undefined && reviewQueue.data.reviews.length > 0),
+        hasData: Boolean(reviewQueue.data?.total_reviews !== undefined && (reviewQueue.data.reviews ?? []).length > 0),
         value: reviewQueue.data ? `${reviewQueue.data.total_reviews} Reviews` : undefined,
         status: "online",
         detail: "Quality Gate Reviews",
@@ -135,7 +135,7 @@ export default memo(function ExecutiveLayout() {
         id: "deployment",
         title: "Deployment Health",
         icon: Rocket,
-        hasData: Boolean(buildRegistry.data?.total_builds !== undefined && buildRegistry.data.builds.length > 0),
+        hasData: Boolean(buildRegistry.data?.total_builds !== undefined && (buildRegistry.data.builds ?? []).length > 0),
         value: buildRegistry.data ? `${buildRegistry.data.total_builds} Builds` : undefined,
         status: "online",
         detail: "CI/CD Deployment Pipeline",
@@ -163,8 +163,9 @@ export default memo(function ExecutiveLayout() {
     exec.data,
   ]);
 
-  const isLoading = exec.isLoading || status.isLoading;
-  const isError = !isLoading && (exec.isError && status.isError);
+  const isLoading = exec.isLoading && status.isLoading && engCapacity.isLoading && repoRegistry.isLoading;
+  const hasData = healthSummaries.some((s) => s.hasData);
+  const isError = !isLoading && healthSummaries.every((s) => !s.hasData);
   const timestamp = exec.data?.timestamp || status.data?.timestamp;
 
   return (
@@ -173,7 +174,7 @@ export default memo(function ExecutiveLayout() {
         title="Executive Command Center — Ecosystem Operational Summaries"
         isLoading={isLoading}
         isError={isError}
-        hasData={true}
+        hasData={hasData}
         onRetry={() => {
           exec.refetch();
           status.refetch();

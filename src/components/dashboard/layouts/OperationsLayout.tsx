@@ -201,7 +201,7 @@ export default memo(function OperationsLayout() {
           <h3 className="text-[11px] uppercase font-mono font-semibold text-slate-400 tracking-wider">
             BHIV Capabilities & Runtime Nodes
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 overflow-y-auto max-h-[220px] custom-scrollbar pr-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 overflow-y-auto max-h-[190px] custom-scrollbar pr-1">
             {bhivCapabilities.map((cap) => (
               <RuntimeCard
                 key={cap.id}
@@ -225,14 +225,14 @@ export default memo(function OperationsLayout() {
             <div className="flex items-center justify-between border-b border-slate-700/60 mb-1.5 pb-0.5">
               <h3 className="text-xs font-semibold text-slate-300">Active Operations</h3>
               <span className="text-[10px] text-slate-500 font-mono font-semibold">
-                {ops.data.operations.length} total
+                {(ops.data.operations ?? []).length} total
               </span>
             </div>
             <div className="space-y-0.5 overflow-y-auto flex-1 min-h-0 max-h-[140px] custom-scrollbar pr-1">
-              {ops.data.operations.length === 0 ? (
+              {(ops.data.operations ?? []).length === 0 ? (
                 <p className="text-xs text-slate-500 text-center py-3">No Runtime Data Available</p>
               ) : (
-                ops.data.operations.map((op) => (
+                (ops.data.operations ?? []).map((op) => (
                   <StatusCard
                     key={op.id}
                     label={op.type}

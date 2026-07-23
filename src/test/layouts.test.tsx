@@ -12,12 +12,39 @@ const mockUseExecutiveDashboard = vi.fn();
 const mockUseSystemStatus = vi.fn();
 const mockUseMetrics = vi.fn();
 const mockUseOperationsDashboard = vi.fn();
+const mockUseRepositoryRegistry = vi.fn();
+const mockUseCapabilityRegistry = vi.fn();
+const mockUseBuildRegistry = vi.fn();
+const mockUseReviewQueue = vi.fn();
+const mockUseEmployeeExecution = vi.fn();
+const mockUseEngineeringCapacity = vi.fn();
+const mockUseDeliveryIntelligence = vi.fn();
+const mockUseMigrationQueue = vi.fn();
+const mockUseTelemetryDashboard = vi.fn();
+const mockUseRuntimeDashboard = vi.fn();
+
+const defaultQueryResult = {
+  data: undefined,
+  isLoading: false,
+  isError: false,
+  refetch: vi.fn(),
+};
 
 vi.mock("@/hooks/useQueries", () => ({
   useExecutiveDashboard: () => mockUseExecutiveDashboard(),
   useSystemStatus: () => mockUseSystemStatus(),
   useMetrics: () => mockUseMetrics(),
   useOperationsDashboard: () => mockUseOperationsDashboard(),
+  useRepositoryRegistry: () => mockUseRepositoryRegistry(),
+  useCapabilityRegistry: () => mockUseCapabilityRegistry(),
+  useBuildRegistry: () => mockUseBuildRegistry(),
+  useReviewQueue: () => mockUseReviewQueue(),
+  useEmployeeExecution: () => mockUseEmployeeExecution(),
+  useEngineeringCapacity: () => mockUseEngineeringCapacity(),
+  useDeliveryIntelligence: () => mockUseDeliveryIntelligence(),
+  useMigrationQueue: () => mockUseMigrationQueue(),
+  useTelemetryDashboard: () => mockUseTelemetryDashboard(),
+  useRuntimeDashboard: () => mockUseRuntimeDashboard(),
 }));
 
 import ExecutiveLayout from "../components/dashboard/layouts/ExecutiveLayout";
@@ -27,6 +54,20 @@ import WorkflowLayout from "../components/dashboard/layouts/WorkflowLayout";
 describe("Layout Components Integration", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mockUseExecutiveDashboard.mockReturnValue(defaultQueryResult);
+    mockUseSystemStatus.mockReturnValue(defaultQueryResult);
+    mockUseMetrics.mockReturnValue(defaultQueryResult);
+    mockUseOperationsDashboard.mockReturnValue(defaultQueryResult);
+    mockUseRepositoryRegistry.mockReturnValue(defaultQueryResult);
+    mockUseCapabilityRegistry.mockReturnValue(defaultQueryResult);
+    mockUseBuildRegistry.mockReturnValue(defaultQueryResult);
+    mockUseReviewQueue.mockReturnValue(defaultQueryResult);
+    mockUseEmployeeExecution.mockReturnValue(defaultQueryResult);
+    mockUseEngineeringCapacity.mockReturnValue(defaultQueryResult);
+    mockUseDeliveryIntelligence.mockReturnValue(defaultQueryResult);
+    mockUseMigrationQueue.mockReturnValue(defaultQueryResult);
+    mockUseTelemetryDashboard.mockReturnValue(defaultQueryResult);
+    mockUseRuntimeDashboard.mockReturnValue(defaultQueryResult);
   });
 
   describe("ExecutiveLayout Component", () => {
@@ -58,10 +99,9 @@ describe("Layout Components Integration", () => {
 
       render(<ExecutiveLayout />);
 
-      expect(screen.getByText("Executive Summary")).toBeInTheDocument();
-      expect(screen.getByText("active contracts count")).toBeInTheDocument();
-      expect(screen.getByText("77")).toBeInTheDocument();
-      expect(screen.getByText("100.0")).toBeInTheDocument();
+      expect(screen.getByText(/Executive Command Center/)).toBeInTheDocument();
+      expect(screen.getByText("Engineering Health")).toBeInTheDocument();
+      expect(screen.getByText("1,500 Reqs")).toBeInTheDocument();
     });
 
     test("renders empty fallback on empty/no KPI dataset", () => {
@@ -81,6 +121,36 @@ describe("Layout Components Integration", () => {
 
       render(<ExecutiveLayout />);
       expect(screen.getAllByText("No Runtime Data Available")[0]).toBeInTheDocument();
+    });
+
+    test("renders inline unavailable state when API fails independently without affecting other cards", () => {
+      // Mock metrics succeeding while status fails (404/Error)
+      mockUseMetrics.mockReturnValue({
+        data: {
+          timestamp: "2026-07-15T16:53:18.000Z",
+          total_requests: 2500,
+          success_rate: 99.5,
+          average_response_time_ms: 30,
+        },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      });
+
+      mockUseRepositoryRegistry.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isError: true,
+        refetch: vi.fn(),
+      });
+
+      render(<ExecutiveLayout />);
+
+      // Successful card section continues displaying live data
+      expect(screen.getByText("2,500 Reqs")).toBeInTheDocument();
+
+      // Failed card section displays inline unavailable message
+      expect(screen.getAllByText("No Runtime Data Available").length).toBeGreaterThan(0);
     });
   });
 
