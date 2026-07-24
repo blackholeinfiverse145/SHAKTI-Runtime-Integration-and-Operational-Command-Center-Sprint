@@ -14,33 +14,74 @@ export interface HealthResponse {
 
 export interface ComponentStatus {
   name: string;
-  status: string;          // "operational" | "degraded" | "offline" | "warning"
+  status: string;          // "operational" | "degraded" | "offline" | "warning" | "healthy" | "CRASH_LOOPING"
   last_check: string;      // ISO 8601
   response_time_ms: number | null;
   details: string;
+  pid?: number;
+  port?: number;
+  restarts?: number;
 }
 
 export interface SystemStatusResponse {
-  overall_status: string;  // "operational" | "degraded" | "offline"
+  overall_status: string;  // "operational" | "degraded" | "offline" | "ok"
   timestamp: string;
   components: ComponentStatus[];
-  uptime_seconds: number;
+  uptime_seconds?: number;
+  shutting_down?: boolean;
+  active_alerts?: number;
+  services?: Record<string, {
+    status: string;
+    pid?: number;
+    port?: number;
+    restarts?: number;
+    last_restart_at?: string;
+    healthy?: boolean;
+  }>;
 }
 
 // ─── GET /metrics ─────────────────────────────────────────────────────────────
 
 export interface MetricsResponse {
   timestamp: string;
-  period_seconds: number;
-  total_requests: number;
-  successful_requests: number;
-  failed_requests: number;
-  success_rate: number | null;   // may be null when no requests yet
-  average_response_time_ms: number | null;
-  active_sessions: number;
-  events_processed: number;
-  alerts_generated: number;
-  cache_hit_rate: number | null;
+  uptime_seconds?: number;
+  services?: {
+    total: number;
+    healthy: number;
+    degraded: number;
+  };
+  requests?: {
+    total: number;
+    errors: number;
+    per_minute: number;
+    error_rate_pct: number;
+    success_rate_pct: number;
+  };
+  latency_ms?: {
+    p50: number;
+    p95: number;
+  };
+  alerts?: {
+    active_count: number;
+    by_severity?: Record<string, number>;
+  };
+  replay?: {
+    total_replays?: number;
+    failed_replays?: number;
+    queue_depth: number;
+  };
+  per_service_snapshots?: Record<string, any>;
+  // Legacy & derived fields for component backward-compatibility
+  period_seconds?: number;
+  total_requests?: number;
+  successful_requests?: number;
+  failed_requests?: number;
+  success_rate?: number | null;
+  average_response_time_ms?: number | null;
+  active_sessions?: number;
+  events_processed?: number;
+  alerts_generated?: number;
+  cache_hit_rate?: number | null;
 }
 
 // ─── GET /dashboard/executive ─────────────────────────────────────────────────
@@ -66,7 +107,7 @@ export interface ExecutiveDashboardResponse {
 export interface OperationItem {
   id: string;
   type: string;
-  status: string;          // "running" | "completed" | "failed" | "pending" | "paused"
+  status: string;          // "running" | "completed" | "failed" | "pending" | "paused" | "healthy" | "CRASH_LOOPING"
   priority: string;        // "critical" | "high" | "medium" | "low"
   started_at: string;
   description: string;
@@ -83,16 +124,33 @@ export interface OperationsDashboardResponse {
   pipeline?: {
     total_traces?: number;
     total_artifacts?: number;
+    artifacts_by_type?: Record<string, number>;
     storage_size_mb?: number;
+    recent_traces?: any[];
+  };
+  requests?: {
+    total: number;
+    errors: number;
+    per_minute: number;
+    error_rate_pct: number;
+    success_rate_pct: number;
   };
   latency_ms?: {
-    p50?: number;
-    p95?: number;
+    p50: number;
+    p95: number;
   };
   replay?: {
     total_replays?: number;
     failed_replays?: number;
   };
+  runtime_services?: Record<string, {
+    status: string;
+    pid?: number;
+    port?: number;
+    restarts?: number;
+    last_restart_at?: string;
+  }>;
+  per_service_snapshots?: Record<string, any>;
 }
 
 // ─── GET /dashboard/alerts ────────────────────────────────────────────────────
@@ -113,13 +171,15 @@ export interface AlertsDashboardResponse {
   unacknowledged: number;
   alerts: AlertItem[];
   alert_summary: Record<string, number>;
+  by_severity?: Record<string, number>;
+  by_status?: Record<string, number>;
 }
 
 // ─── GET /dashboard/runtime ───────────────────────────────────────────────────
 
 export interface RuntimeSession {
   session_id: string;
-  status: string;          // "active" | "idle" | "completed" | "failed"
+  status: string;          // "active" | "idle" | "completed" | "failed" | "healthy" | "CRASH_LOOPING"
   started_at: string;
   last_activity: string;
   events_processed: number;
@@ -129,6 +189,21 @@ export interface RuntimeSession {
 
 export interface RuntimeDashboardResponse {
   timestamp: string;
+  generated_at?: string;
+  uptime_seconds?: number;
+  shutting_down?: boolean;
+  services?: Record<string, {
+    status: string;
+    pid?: number;
+    port?: number;
+    restarts?: number;
+    last_restart_at?: string;
+  }>;
+  summary?: {
+    total: number;
+    healthy: number;
+    degraded: number;
+  };
   active_sessions: number;
   total_events_processed: number;
   system_status: string;
@@ -167,6 +242,7 @@ export interface TelemetryDashboardResponse {
     total_events?: number;
     by_component?: Record<string, number>;
     by_event_type?: Record<string, number>;
+    recent_events?: any[];
   };
   recent_telemetry?: {
     trace_id: string;
@@ -195,6 +271,8 @@ export interface TelemetryDashboardResponse {
     } | null;
   }[];
   classification_breakdown?: Record<string, number>;
+  per_trace_telemetry?: any[];
+  thresholds?: Record<string, any>;
 }
 
 // ─── GET /registry/repositories (BHEX Operational Surface) ────────────────────

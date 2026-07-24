@@ -27,12 +27,17 @@ export default memo(function RuntimeHealthLayout() {
 
   // Derive telemetry bar values from real /metrics data
   const m = metrics.data;
-  const uptimeDisplay = typeof m?.success_rate === "number" ? `${m.success_rate.toFixed(2)}%` : "—";
-  const errorDisplay = typeof m?.failed_requests === "number" && typeof m?.total_requests === "number" && m.total_requests > 0
-    ? `${((m.failed_requests / m.total_requests) * 100).toFixed(2)}%`
-    : "—";
-  const latencyDisplay = typeof m?.average_response_time_ms === "number" ? `${m.average_response_time_ms.toFixed(0)}ms` : "—";
-  const rpmDisplay = typeof m?.total_requests === "number" ? m.total_requests.toLocaleString() : "—";
+  const successVal = m?.requests?.success_rate_pct ?? m?.success_rate;
+  const uptimeDisplay = typeof successVal === "number" ? `${successVal.toFixed(2)}%` : "—";
+  
+  const errorVal = m?.requests?.error_rate_pct ?? (typeof m?.failed_requests === "number" && typeof m?.total_requests === "number" && m.total_requests > 0 ? (m.failed_requests / m.total_requests) * 100 : 0);
+  const errorDisplay = typeof errorVal === "number" ? `${errorVal.toFixed(2)}%` : "—";
+  
+  const latencyVal = m?.latency_ms?.p95 ?? m?.latency_ms?.p50 ?? m?.average_response_time_ms;
+  const latencyDisplay = typeof latencyVal === "number" ? `${latencyVal.toFixed(0)}ms` : "—";
+  
+  const rpmVal = m?.requests?.total ?? m?.total_requests;
+  const rpmDisplay = typeof rpmVal === "number" ? rpmVal.toLocaleString() : "—";
 
   return (
     <DashboardCard

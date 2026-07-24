@@ -58,8 +58,8 @@ export default memo(function ExecutiveLayout() {
         hasData: Boolean(engCapacity.data || metrics.data),
         value: engCapacity.data
           ? `${engCapacity.data.active_developers} Active Devs`
-          : metrics.data?.total_requests != null
-          ? `${metrics.data.total_requests.toLocaleString()} Reqs`
+          : (metrics.data?.requests?.total ?? metrics.data?.total_requests) != null
+          ? `${(metrics.data?.requests?.total ?? metrics.data?.total_requests ?? 0).toLocaleString()} Reqs`
           : undefined,
         status: engCapacity.data?.blocked_developers
           ? engCapacity.data.blocked_developers > 0
